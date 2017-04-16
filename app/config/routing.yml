@@ -1,0 +1,8 @@
+front_office:
+    resource: "@FrontOfficeBundle/Controller/"
+    type:     annotation
+    prefix:   /frontoffice
+
+app:
+    resource: '@YudjiePetShopBundle/Controller/'
+    type: annotation
