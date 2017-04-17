@@ -1,6 +1,6 @@
 <?php
 
-namespace YudjiePetShopBundle\Entity;
+namespace AppBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -9,7 +9,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  * Product
  *
  * @ORM\Table(name="product")
- * @ORM\Entity(repositoryClass="YudjiePetShopBundle\Repository\ProductRepository")
+ * @ORM\Entity(repositoryClass="AppBundle\Repository\ProductRepository")
  */
 class Product
 {

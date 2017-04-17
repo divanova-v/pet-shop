@@ -1,6 +1,6 @@
 <?php
 
-namespace YudjiePetShopBundle\Tests\Controller;
+namespace AppBundle\Tests\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 

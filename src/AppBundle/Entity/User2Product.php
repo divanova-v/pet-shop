@@ -1,6 +1,6 @@
 <?php
 
-namespace YudjiePetShopBundle\Entity;
+namespace AppBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
@@ -8,7 +8,7 @@ use Doctrine\ORM\Mapping as ORM;
  * User2Product
  *
  * @ORM\Table(name="user2_product")
- * @ORM\Entity(repositoryClass="YudjiePetShopBundle\Repository\User2ProductRepository")
+ * @ORM\Entity(repositoryClass="AppBundle\Repository\User2ProductRepository")
  */
 class User2Product
 {
@@ -25,7 +25,7 @@ class User2Product
      * @var int
      *
      * @ORM\Column(name="user_id", type="integer")
-     * @ORM\ManyToOne(targetEntity="YudjiePetShopBundle\Entity\User", inversedBy="products")
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\User", inversedBy="products")
      */
     private $userId;
 
@@ -33,7 +33,7 @@ class User2Product
      * @var int
      *
      * @ORM\Column(name="product_id", type="integer")
-     * @ORM\ManyToOne(targetEntity="YudjiePetShopBundle\Entity\Product", inversedBy="seller")
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Product", inversedBy="seller")
      */
     private $productId;
 

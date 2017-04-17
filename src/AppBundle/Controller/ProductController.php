@@ -1,9 +1,10 @@
 <?php
 
-namespace YudjiePetShopBundle\Controller;
+namespace AppBundle\Controller;
 
+use AppBundle\Form\ProductType;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
-use YudjiePetShopBundle\Entity\Product;
+use AppBundle\Entity\Product;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;use Symfony\Component\HttpFoundation\Request;
@@ -25,7 +26,7 @@ class ProductController extends Controller
     {
         $em = $this->getDoctrine()->getManager();
 
-        $products = $em->getRepository('YudjiePetShopBundle:Product')->findAll();
+        $products = $em->getRepository('AppBundle:Product')->findAll();
 
         return $this->render('product/index.html.twig', array(
             'products' => $products,
@@ -41,7 +42,7 @@ class ProductController extends Controller
     public function newAction(Request $request)
     {
         $product = new Product();
-        $form = $this->createForm('YudjiePetShopBundle\Form\ProductType', $product);
+        $form = $this->createForm(ProductType::class, $product);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
@@ -100,7 +101,7 @@ class ProductController extends Controller
     public function editAction(Request $request, Product $product)
     {
         $deleteForm = $this->createDeleteForm($product);
-        $editForm = $this->createForm('YudjiePetShopBundle\Form\ProductType', $product);
+        $editForm = $this->createForm(ProductType::class, $product);
         $editForm->handleRequest($request);
 
         if ($editForm->isSubmitted() && $editForm->isValid()) {

@@ -3,14 +3,14 @@
 security:
 
     encoders:
-        YudjiePetShopBundle\Entity\User:
+        AppBundle\Entity\User:
             algorithm: bcrypt
 
     # http://symfony.com/doc/current/security.html#b-configuring-how-users-are-loaded
     providers:
         user_provider:
             entity:
-                class: YudjiePetShopBundle:User
+                class: AppBundle:User
 
 
     firewalls:

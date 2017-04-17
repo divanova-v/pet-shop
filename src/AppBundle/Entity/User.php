@@ -1,6 +1,6 @@
 <?php
 
-namespace YudjiePetShopBundle\Entity;
+namespace AppBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
@@ -11,7 +11,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  * User
  *
  * @ORM\Table(name="user")
- * @ORM\Entity(repositoryClass="YudjiePetShopBundle\Repository\UserRepository")
+ * @ORM\Entity(repositoryClass="AppBundle\Repository\UserRepository")
  */
 class User implements UserInterface
 {
@@ -55,7 +55,7 @@ class User implements UserInterface
 
     /**
      * @var Product[]|ArrayCollection
-     * @ORM\OneToMany(targetEntity="YudjiePetShopBundle\Entity\User2Product", mappedBy="user_id")
+     * @ORM\OneToMany(targetEntity="AppBundle\Entity\User2Product", mappedBy="user_id")
      */
     private $products;
 

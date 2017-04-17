@@ -1,6 +1,6 @@
 <?php
 
-namespace YudjiePetShopBundle\Repository;
+namespace AppBundle\Repository;
 
 /**
  * ProductRepository

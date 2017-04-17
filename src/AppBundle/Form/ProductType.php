@@ -1,6 +1,6 @@
 <?php
 
-namespace YudjiePetShopBundle\Form;
+namespace AppBundle\Form;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
@@ -33,7 +33,7 @@ class ProductType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults(array(
-            'data_class' => 'YudjiePetShopBundle\Entity\Product'
+            'data_class' => 'AppBundle\Entity\Product'
         ));
     }
 

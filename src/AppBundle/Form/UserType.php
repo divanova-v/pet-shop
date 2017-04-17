@@ -1,6 +1,6 @@
 <?php
 
-namespace YudjiePetShopBundle\Form;
+namespace AppBundle\Form;
 
 use function Symfony\Component\DependencyInjection\Tests\Fixtures\factoryFunction;
 use Symfony\Component\Form\AbstractType;
@@ -11,7 +11,7 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\NotBlank;
-use YudjiePetShopBundle\Entity\User;
+use AppBundle\Entity\User;
 
 class UserType extends AbstractType
 {
@@ -53,7 +53,7 @@ class UserType extends AbstractType
      */
     public function getBlockPrefix()
     {
-        return 'yudjiepetshopbundle_user';
+        return 'appbundle_user';
     }
 
 
