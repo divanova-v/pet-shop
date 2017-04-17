@@ -2,6 +2,7 @@
 
 namespace YudjiePetShopBundle\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -51,6 +52,12 @@ class User implements UserInterface
      * @Assert\Length(min="4")
      */
     private $password_row;
+
+    /**
+     * @var Product[]|ArrayCollection
+     * @ORM\OneToMany(targetEntity="YudjiePetShopBundle\Entity\User2Product", mappedBy="user_id")
+     */
+    private $products;
 
     /**
      * @return mixed

@@ -29,15 +29,6 @@ class SecurityController extends Controller
     }
 
     /**
-     * @Route("/login_check", name="user_check")
-     * @param Request $request
-     * @return \Symfony\Component\HttpFoundation\RedirectResponse
-     */
-    public function checkAction(Request $request){
-        return $this->redirectToRoute('homepage');
-    }
-
-    /**
      * @Route("/register", name="user_register")
      * @Template()
      */
@@ -62,5 +53,12 @@ class SecurityController extends Controller
         return [
             'register_form' => $form->createView()
         ];
+    }
+
+    /**
+     * @Route("/logout", name="user_logout")
+     */
+    public function logoutAction(){
+
     }
 }
