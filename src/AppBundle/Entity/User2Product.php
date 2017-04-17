@@ -33,9 +33,15 @@ class User2Product
      * @var int
      *
      * @ORM\Column(name="product_id", type="integer")
-     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Product", inversedBy="seller")
      */
     private $productId;
+
+    /**
+     * @var int
+     *
+     * @ORM\Column(name="sale_offer_id", type="integer")
+     */
+    private $saleOfferId;
 
     /**
      * @var int
@@ -44,6 +50,31 @@ class User2Product
      */
     private $quantity;
 
+    /**
+     * @var \DateTime
+     *
+     * @ORM\Column(name="createdOn", type="datetime")
+     */
+    private $createdOn;
+
+    /**
+     * @var \DateTime
+     *
+     * @ORM\Column(name="updatedOn", type="datetime")
+     */
+    private $updatedOn;
+
+    /**
+     * @var Product
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Product", inversedBy="sales")
+     */
+    private $product;
+
+    /**
+     * @var SaleOffer
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\SaleOffer", inversedBy="soldProducts")
+     */
+    private $saleOffer;
 
     /**
      * Get id
@@ -126,5 +157,87 @@ class User2Product
     {
         return $this->quantity;
     }
+
+    /**
+     * @return Product
+     */
+    public function getProduct()
+    {
+        return $this->product;
+    }
+
+    /**
+     * @param Product $product
+     */
+    public function setProduct($product)
+    {
+        $this->product = $product;
+    }
+
+    /**
+     * @return int
+     */
+    public function getSaleOfferId()
+    {
+        return $this->saleOfferId;
+    }
+
+    /**
+     * @param int $saleOfferId
+     */
+    public function setSaleOfferId($saleOfferId)
+    {
+        $this->saleOfferId = $saleOfferId;
+    }
+
+    /**
+     * @return SaleOffer
+     */
+    public function getSaleOffer()
+    {
+        return $this->saleOffer;
+    }
+
+    /**
+     * @param SaleOffer $saleOffer
+     */
+    public function setSaleOffer($saleOffer)
+    {
+        $this->saleOffer = $saleOffer;
+    }
+
+    /**
+     * @return \DateTime
+     */
+    public function getCreatedOn()
+    {
+        return $this->createdOn;
+    }
+
+    /**
+     * @param \DateTime $createdOn
+     */
+    public function setCreatedOn($createdOn)
+    {
+        $this->createdOn = $createdOn;
+    }
+
+    /**
+     * @return \DateTime
+     */
+    public function getUpdatedOn()
+    {
+        return $this->updatedOn;
+    }
+
+    /**
+     * @param \DateTime $updatedOn
+     */
+    public function setUpdatedOn($updatedOn)
+    {
+        $this->updatedOn = $updatedOn;
+    }
+
+
 }
 

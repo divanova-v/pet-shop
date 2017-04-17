@@ -2,6 +2,7 @@
 
 namespace AppBundle\Controller;
 
+use AppBundle\Entity\SaleOffer;
 use AppBundle\Form\ProductType;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use AppBundle\Entity\Product;
@@ -42,12 +43,19 @@ class ProductController extends Controller
     public function newAction(Request $request)
     {
         $product = new Product();
+        $offer = new SaleOffer();
+        $product->getSaleOffers()->add($offer);
         $form = $this->createForm(ProductType::class, $product);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            $product->setCategoryId($product->getCategory()->getId());
+
             $product->setCreatedOn(new \DateTime());
             $product->setUpdatedOn(new \DateTime());
+            $offer->setCreatedOn(new \DateTime());
+            $offer->setUpdatedOn(new \DateTime());
+            $offer->setUserId(null);
 
             /** @var UploadedFile $file */
             $file = $product->getUploadedImage();
@@ -63,6 +71,7 @@ class ProductController extends Controller
 
             $em = $this->getDoctrine()->getManager();
             $em->persist($product);
+            $em->persist($offer);
             $em->flush();
 
             $this->get('session')->getFlashBag()->add('success', 'Product is created');

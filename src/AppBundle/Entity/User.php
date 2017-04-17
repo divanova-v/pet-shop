@@ -55,9 +55,20 @@ class User implements UserInterface
 
     /**
      * @var Product[]|ArrayCollection
-     * @ORM\OneToMany(targetEntity="AppBundle\Entity\User2Product", mappedBy="user_id")
+     * @ORM\OneToMany(targetEntity="AppBundle\Entity\User2Product", mappedBy="userId")
      */
     private $products;
+
+    /**
+     * @var SaleOffer[]|ArrayCollection
+     * @ORM\OneToMany(targetEntity="AppBundle\Entity\SaleOffer", mappedBy="user");
+     */
+    private $saleOffers;
+
+    public function __construct()
+    {
+        $this->saleOffers = new ArrayCollection();
+    }
 
     /**
      * @return mixed
@@ -179,6 +190,40 @@ class User implements UserInterface
     {
 
     }
+
+    /**
+     * @return Product[]|ArrayCollection
+     */
+    public function getProducts()
+    {
+        return $this->products;
+    }
+
+    /**
+     * @param Product[]|ArrayCollection $products
+     */
+    public function setProducts($products)
+    {
+        $this->products = $products;
+    }
+
+    /**
+     * @return SaleOffer[]|ArrayCollection
+     */
+    public function getSaleOffers()
+    {
+        return $this->saleOffers;
+    }
+
+    /**
+     * @param SaleOffer[]|ArrayCollection $saleOffers
+     */
+    public function setSaleOffers($saleOffers)
+    {
+        $this->saleOffers = $saleOffers;
+    }
+
+
 
 
 }

@@ -64,14 +64,15 @@
     {% endblock %}
 
     <div class="container body-container">
+        <div class="row">
+        {% if app.session.flashBag.has('success') %}
+                {% for message in app.session.flashBag.get('success') %}
+                    <div class="alert alert-success" role="alert"> {{ message }}</div>
+                {% endfor %}
+        {% endif %}
+        </div>
         {% block body %}
-            {% if app.session.flashBag.has('success') %}
-                <ul>
-                    {% for message in app.session.flashBag.get('success') %}
-                        <li>{{ message }}</li>
-                    {% endfor %}
-                </ul>
-            {% endif %}
+
             <div class="row">
                 <div id="main" class="col-sm-9">
                     {% block main %}{% endblock %}
