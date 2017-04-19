@@ -1,0 +1,44 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <h1>User2product</h1>
+
+    <table>
+        <tbody>
+            <tr>
+                <th>Id</th>
+                <td>{{ user2Product.id }}</td>
+            </tr>
+            <tr>
+                <th>Userid</th>
+                <td>{{ user2Product.userId }}</td>
+            </tr>
+            <tr>
+                <th>Productid</th>
+                <td>{{ user2Product.productId }}</td>
+            </tr>
+            <tr>
+                <th>Saleofferid</th>
+                <td>{{ user2Product.saleOfferId }}</td>
+            </tr>
+            <tr>
+                <th>Quantity</th>
+                <td>{{ user2Product.quantity }}</td>
+            </tr>
+            <tr>
+                <th>Createdon</th>
+                <td>{% if user2Product.createdOn %}{{ user2Product.createdOn|date('Y-m-d H:i:s') }}{% endif %}</td>
+            </tr>
+            <tr>
+                <th>Updatedon</th>
+                <td>{% if user2Product.updatedOn %}{{ user2Product.updatedOn|date('Y-m-d H:i:s') }}{% endif %}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <ul>
+        <li>
+            <a href="{{ path('user2product_index') }}">Back to the list</a>
+        </li>
+    </ul>
+{% endblock %}

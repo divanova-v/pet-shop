@@ -289,6 +289,8 @@ class Product
      */
     public function addSaleOffer(SaleOffer $saleOffer)
     {
+        $saleOffer->setProduct($this);
+        dump($this);
         $this->saleOffers->add($saleOffer);
     }
 

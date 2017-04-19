@@ -1,0 +1,60 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <h1>Saleoffer</h1>
+
+    <table>
+        <tbody>
+            <tr>
+                <th>Id</th>
+                <td>{{ saleOffer.id }}</td>
+            </tr>
+            <tr>
+                <th>Productid</th>
+                <td>{{ saleOffer.productId }}</td>
+            </tr>
+            <tr>
+                <th>Userid</th>
+                <td>{{ saleOffer.userId }}</td>
+            </tr>
+            <tr>
+                <th>Description</th>
+                <td>{{ saleOffer.description }}</td>
+            </tr>
+            <tr>
+                <th>Price</th>
+                <td>{{ saleOffer.price }}</td>
+            </tr>
+            <tr>
+                <th>Quantity</th>
+                <td>{{ saleOffer.quantity }}</td>
+            </tr>
+            <tr>
+                <th>Showorder</th>
+                <td>{{ saleOffer.showOrder }}</td>
+            </tr>
+            <tr>
+                <th>Createdon</th>
+                <td>{% if saleOffer.createdOn %}{{ saleOffer.createdOn|date('Y-m-d H:i:s') }}{% endif %}</td>
+            </tr>
+            <tr>
+                <th>Updatedon</th>
+                <td>{% if saleOffer.updatedOn %}{{ saleOffer.updatedOn|date('Y-m-d H:i:s') }}{% endif %}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <ul>
+        <li>
+            <a href="{{ path('saleoffer_index') }}">Back to the list</a>
+        </li>
+        <li>
+            <a href="{{ path('saleoffer_edit', { 'id': saleOffer.id }) }}">Edit</a>
+        </li>
+        <li>
+            {{ form_start(delete_form) }}
+                <input type="submit" value="Delete">
+            {{ form_end(delete_form) }}
+        </li>
+    </ul>
+{% endblock %}

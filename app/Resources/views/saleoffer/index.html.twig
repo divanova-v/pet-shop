@@ -1,0 +1,53 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <h1>Saleoffers list</h1>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Productid</th>
+                <th>Userid</th>
+                <th>Description</th>
+                <th>Price</th>
+                <th>Quantity</th>
+                <th>Showorder</th>
+                <th>Createdon</th>
+                <th>Updatedon</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for saleOffer in saleOffers %}
+            <tr>
+                <td><a href="{{ path('saleoffer_show', { 'id': saleOffer.id }) }}">{{ saleOffer.id }}</a></td>
+                <td>{{ saleOffer.productId }}</td>
+                <td>{{ saleOffer.userId }}</td>
+                <td>{{ saleOffer.description }}</td>
+                <td>{{ saleOffer.price }}</td>
+                <td>{{ saleOffer.quantity }}</td>
+                <td>{{ saleOffer.showOrder }}</td>
+                <td>{% if saleOffer.createdOn %}{{ saleOffer.createdOn|date('Y-m-d H:i:s') }}{% endif %}</td>
+                <td>{% if saleOffer.updatedOn %}{{ saleOffer.updatedOn|date('Y-m-d H:i:s') }}{% endif %}</td>
+                <td>
+                    <ul>
+                        <li>
+                            <a href="{{ path('saleoffer_show', { 'id': saleOffer.id }) }}">show</a>
+                        </li>
+                        <li>
+                            <a href="{{ path('saleoffer_edit', { 'id': saleOffer.id }) }}">edit</a>
+                        </li>
+                    </ul>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <ul>
+        <li>
+            <a href="{{ path('saleoffer_new') }}">Create a new saleOffer</a>
+        </li>
+    </ul>
+{% endblock %}

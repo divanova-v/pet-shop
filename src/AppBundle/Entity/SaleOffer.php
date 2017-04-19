@@ -320,5 +320,39 @@ class SaleOffer
         $this->product = $product;
     }
 
+    /**
+     * @return User
+     */
+    public function getUser()
+    {
+        return $this->user;
+    }
+
+    /**
+     * @param User $user
+     */
+    public function setUser($user)
+    {
+        $this->user = $user;
+    }
+
+    /**
+     * @return User2Product[]|ArrayCollection
+     */
+    public function getSoldProducts()
+    {
+        return $this->soldProducts;
+    }
+
+    /**
+     * @param User2Product[]|ArrayCollection $soldProducts
+     */
+    public function setSoldProducts($soldProducts)
+    {
+        $this->soldProducts = $soldProducts;
+    }
+
+
+
 }
 

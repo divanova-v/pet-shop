@@ -55,7 +55,7 @@ class ProductController extends Controller
             $product->setUpdatedOn(new \DateTime());
             $offer->setCreatedOn(new \DateTime());
             $offer->setUpdatedOn(new \DateTime());
-            $offer->setUserId(null);
+           // $offer->setUserId(null);
 
             /** @var UploadedFile $file */
             $file = $product->getUploadedImage();
@@ -68,6 +68,8 @@ class ProductController extends Controller
                 $this->get('kernel')->getRootDir() . '/../web/images/products/',
                 $filename);
             $product->setImage($filename);
+
+            $product->addSaleOffer($offer);
 
             $em = $this->getDoctrine()->getManager();
             $em->persist($product);

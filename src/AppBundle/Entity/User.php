@@ -223,7 +223,13 @@ class User implements UserInterface
         $this->saleOffers = $saleOffers;
     }
 
-
+    /**
+     * @param SaleOffer $saleOffer
+     */
+    public function addSaleOffer(SaleOffer $saleOffer)
+    {
+        $this->getSaleOffers()->add($saleOffer);
+    }
 
 
 }
