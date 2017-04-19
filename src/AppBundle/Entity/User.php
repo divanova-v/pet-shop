@@ -15,6 +15,8 @@ use Symfony\Component\Validator\Constraints as Assert;
  */
 class User implements UserInterface
 {
+
+    const INITIAL_CASH = 5000;
     /**
      * @var int
      *
@@ -46,6 +48,12 @@ class User implements UserInterface
      * @ORM\Column(name="password", type="string", length=255)
      */
     private $password;
+
+    /**
+     * @var int
+     * @ORM\Column(name="cash", type="integer")
+     */
+    private $cash;
 
     /**
      * @var string
@@ -229,6 +237,22 @@ class User implements UserInterface
     public function addSaleOffer(SaleOffer $saleOffer)
     {
         $this->getSaleOffers()->add($saleOffer);
+    }
+
+    /**
+     * @return int
+     */
+    public function getCash()
+    {
+        return $this->cash;
+    }
+
+    /**
+     * @param int $cash
+     */
+    public function setCash($cash)
+    {
+        $this->cash = $cash;
     }
 
 

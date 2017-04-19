@@ -6880,7 +6880,7 @@ table > tbody > tr > td,
 .table > tbody > tr > td,
 table > tfoot > tr > td,
 .table > tfoot > tr > td {
-  border: none;
+  /*border: none;*/
 }
 table-bordered > thead > tr > th,
 .table-bordered > thead > tr > th,

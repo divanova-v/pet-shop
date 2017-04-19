@@ -3,13 +3,11 @@
 {% block body %}
     <h1>Products list</h1>
 
-    <table>
+    <table class="table">
         <thead>
             <tr>
                 <th>Id</th>
                 <th>Name</th>
-                <th>Price</th>
-                <th>Description</th>
                 <th>Image</th>
                 <th>Createdon</th>
                 <th>Updatedon</th>
@@ -21,8 +19,6 @@
             <tr>
                 <td><a href="{{ path('product_show', { 'id': product.id }) }}">{{ product.id }}</a></td>
                 <td>{{ product.name }}</td>
-                <td>{{ product.price }}</td>
-                <td>{{ product.description }}</td>
                 <td><img width="50px" src="/images/products/{{ product.image }}"/></td>
                 <td>{% if product.createdOn %}{{ product.createdOn|date('Y-m-d H:i:s') }}{% endif %}</td>
                 <td>{% if product.updatedOn %}{{ product.updatedOn|date('Y-m-d H:i:s') }}{% endif %}</td>

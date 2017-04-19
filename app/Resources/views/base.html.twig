@@ -10,7 +10,6 @@
         <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}"/>
 
     </head>
-    <body>
 
     <body id="{% block body_id %}{% endblock %}">
 
@@ -23,6 +22,9 @@
                         {% if app.user %}
                             <a href="{{ path('product_new') }}" class="navbar-brand">
                                 Add Product
+                            </a>
+                            <a href="{{ path('product-category_index') }}" class="navbar-brand">
+                                Categories
                             </a>
                         {% endif %}
                         <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
@@ -67,14 +69,19 @@
         <div class="row">
         {% if app.session.flashBag.has('success') %}
                 {% for message in app.session.flashBag.get('success') %}
-                    <div class="alert alert-success" role="alert"> {{ message }}</div>
+                    <div class="alert alert-success alert-dismissable" role="alert">
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                        {{ message }}
+                    </div>
                 {% endfor %}
         {% endif %}
         </div>
         {% block body %}
 
             <div class="row">
-                <div id="main" class="col-sm-9">
+                <div id="main" class="col-lg-12">
                     {% block main %}{% endblock %}
                 </div>
             </div>
@@ -90,7 +97,7 @@
     {% endblock %}
 
     {% block javascripts %}
-        <script src="{{ asset('js/jquery-2.2.4.min.js') }}"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
         <script src="{{ asset('js/moment.min.js') }}"></script>
         <script src="{{ asset('js/bootstrap.js') }}"></script>
         <script src="{{ asset('js/bootstrap-datetimepicker.min.js') }}"></script>

@@ -24,7 +24,8 @@ class SaleOfferController extends Controller
     {
         $em = $this->getDoctrine()->getManager();
 
-        $saleOffers = $em->getRepository('AppBundle:SaleOffer')->findAll();
+        $saleOffers = $em->getRepository('AppBundle:SaleOffer')
+            ->findBy([], ['createdOn' => 'DESC']);
 
         return $this->render('saleoffer/index.html.twig', array(
             'saleOffers' => $saleOffers,
