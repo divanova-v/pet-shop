@@ -18,13 +18,13 @@
             <div class="navbar navbar-default navbar-static-top" role="navigation">
                 <div class="container">
                     <div class="navbar-header">
-                        <a href="" class="navbar-brand">SOFTUNI BLOG</a>
-                        {% if app.user %}
-                            <a href="{{ path('product_new') }}" class="navbar-brand">
-                                Add Product
+                        <a href="{{ path('homepage') }}" class="navbar-brand">SHOPPING CART</a>
+                        {% if is_granted('ROLE_ADMIN') or is_granted('ROLE_EDITOR') %}
+                            <a href="{{ path('product_index') }}" class="navbar-brand">
+                                Products
                             </a>
                             <a href="{{ path('product-category_index') }}" class="navbar-brand">
-                                Categories
+                                 Categories
                             </a>
                         {% endif %}
                         <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
@@ -35,12 +35,15 @@
                     </div>
                     <div class="navbar-collapse collapse">
                         <ul class="nav navbar-nav navbar-right">
-                            {% if app.user %}
+
+                            {% if is_granted('ROLE_USER') %}
                                 <li>
                                     <a href="">
                                         My Profile
                                     </a>
                                 </li>
+                            {% endif %}
+                            {% if app.user %}
                                 <li>
                                     <a href="{{ path('user_logout') }}">
                                         Logout

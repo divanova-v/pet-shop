@@ -5,7 +5,6 @@ namespace AppBundle\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
-
 /**
  * Product
  *
@@ -27,7 +26,7 @@ class Product
      * @var string
      *
      * @ORM\Column(name="name", type="string", length=255)
-     * @Assert\NotBlank()
+     * @Assert\NotBlank(message="Product name can not be empty")
      * @Assert\Length(max="255")
      */
     private $name;
@@ -47,7 +46,8 @@ class Product
      *     minWidth = 200,
      *     maxWidth = 400,
      *     minHeight = 200,
-     *     maxHeight = 400)
+     *     maxHeight = 400),
+     *     mimeTypesMessage="This is not valid image format. Use image in format .png or .jpeg."
      */
     private $uploadedImage;
 
@@ -74,12 +74,13 @@ class Product
     /**
      * @var ProductCategory
      * @ORM\ManyToOne(targetEntity="AppBundle\Entity\ProductCategory", inversedBy="products")
+     * @Assert\NotBlank(message="Select product category please")
      */
     private $category;
 
     /**
      * @var SaleOffer[]|ArrayCollection
-     * @ORM\OneToMany(targetEntity="AppBundle\Entity\SaleOffer", mappedBy="productId")
+     * @ORM\OneToMany(targetEntity="AppBundle\Entity\SaleOffer", mappedBy="product")
      */
     private $saleOffers;
 
@@ -88,6 +89,11 @@ class Product
      * @ORM\OneToMany(targetEntity="AppBundle\Entity\User2Product", mappedBy="product")
      */
     private $sales;
+
+    /**
+     * @var SaleOffer
+     */
+    private $shopOffer;
 
     public function __construct()
     {
@@ -290,7 +296,6 @@ class Product
     public function addSaleOffer(SaleOffer $saleOffer)
     {
         $saleOffer->setProduct($this);
-        dump($this);
         $this->saleOffers->add($saleOffer);
     }
 
@@ -302,6 +307,28 @@ class Product
     {
         //
     }
+
+    public function isDeletable()
+    {
+        return $this->getSaleOffers()->count() === 1 && $this->getSaleOffers()->current()->getUserId() === null;
+    }
+
+    /**
+     * @return SaleOffer
+     */
+    public function getShopOffer()
+    {
+        return $this->shopOffer;
+    }
+
+    /**
+     * @param SaleOffer $shopOffer
+     */
+    public function setShopOffer($shopOffer)
+    {
+        $this->shopOffer = $shopOffer;
+    }
+
 
 
   }

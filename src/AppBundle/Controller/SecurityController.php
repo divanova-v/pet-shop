@@ -2,6 +2,7 @@
 
 namespace AppBundle\Controller;
 
+use AppBundle\Entity\Role;
 use AppBundle\Entity\User;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -40,6 +41,10 @@ class SecurityController extends Controller
         if($form->isSubmitted() && $form->isValid()){
             $user = $form->getData();
             $user->setCash(User::INITIAL_CASH);
+            $defaultRole = $this->getDoctrine()
+            ->getRepository(Role::class)
+            ->findOneBy(['name' => Role::getDefaultRole()]);
+            $user->addRole($defaultRole);
             $encrypter = $this->get('security.password_encoder');
 
             $user->setPassword(

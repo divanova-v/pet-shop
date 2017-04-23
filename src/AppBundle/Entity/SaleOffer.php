@@ -4,6 +4,8 @@ namespace AppBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
+
 
 /**
  * SaleOffer
@@ -40,6 +42,7 @@ class SaleOffer
      * @var string
      *
      * @ORM\Column(name="description", type="text")
+     * @Assert\NotBlank(message="Add description for the sale offer please")
      */
     private $description;
 
@@ -47,6 +50,10 @@ class SaleOffer
      * @var string
      *
      * @ORM\Column(name="price", type="decimal", precision=10, scale=2)
+     *
+     * @Assert\NotBlank(message="Price can not be empty")
+     * @Assert\Type(type="double", message="The value {{value}} is not a valid number")
+     * @Assert\GreaterThan(value="0.01", message="Price must be a positive value")
      */
     private $price;
 
@@ -54,6 +61,9 @@ class SaleOffer
      * @var int
      *
      * @ORM\Column(name="quantity", type="integer")
+     *
+     * @Assert\NotBlank(message="What quantity of this product you offer to sale?")
+     * @Assert\Type(type="integer")
      */
     private $quantity;
 
@@ -81,6 +91,7 @@ class SaleOffer
     /**
      * @var Product
      * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Product", inversedBy="saleOffers")
+     * @ORM\JoinColumn(name="product_id", referencedColumnName="id", onDelete="CASCADE")
      */
     private $product;
 

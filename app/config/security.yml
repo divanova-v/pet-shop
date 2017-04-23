@@ -29,6 +29,7 @@ security:
                 default_target_path: homepage
             logout:
                 path: user_logout
+            access_denied_handler: app.security.access_denied_handler
 
     access_control:
         - { path: ^/register , roles: IS_AUTHENTICATED_ANONYMOUSLY }

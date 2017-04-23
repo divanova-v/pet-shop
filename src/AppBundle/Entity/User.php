@@ -30,8 +30,8 @@ class User implements UserInterface
      * @var string
      *
      * @ORM\Column(name="email", type="string", length=255, unique=true)
-     * @Assert\NotBlank()
-     * @Assert\Email()
+     * @Assert\NotBlank(message="Email is required")
+     * @Assert\Email(message="This is not a valid email")
      */
     private $email;
 
@@ -39,6 +39,9 @@ class User implements UserInterface
      * @var string
      *
      * @ORM\Column(name="fullName", type="string", length=255)
+     *
+     * @Assert\NotBlank(message="Full name is required")
+     * @Assert\Type(type="string")
      */
     private $fullName;
 
@@ -57,6 +60,7 @@ class User implements UserInterface
 
     /**
      * @var string
+     * @Assert\NotBlank(message="Password is required")
      * @Assert\Length(min="4")
      */
     private $password_row;
@@ -73,9 +77,20 @@ class User implements UserInterface
      */
     private $saleOffers;
 
+    /**
+     * @var ArrayCollection |Role[]
+     * @ORM\ManyToMany(targetEntity="AppBundle\Entity\Role")
+     * @ORM\JoinTable(name="users_roles",
+     *     joinColumns={@ORM\JoinColumn(name="user_id", referencedColumnName="id")},
+     *     inverseJoinColumns={@ORM\JoinColumn(name="role_id", referencedColumnName="id")}
+     * )
+     */
+    private $roles;
+
     public function __construct()
     {
         $this->saleOffers = new ArrayCollection();
+        $this->roles = new ArrayCollection();
     }
 
     /**
@@ -181,7 +196,22 @@ class User implements UserInterface
 
     public function getRoles()
     {
-        return ['ROLE_USER'];
+        $userRoles = [];
+        foreach ($this->roles as $role) {
+            $userRoles[] = $role->getName();
+        }
+        return $userRoles;
+    }
+
+    /**
+     * add role to user
+     * @param Role $role
+     * @return $this
+     */
+    public function addRole(Role $role)
+    {
+        $this->roles[] = $role;
+        return $this;
     }
 
     public function getSalt()

@@ -5,12 +5,15 @@ namespace AppBundle\Controller;
 use AppBundle\Entity\ProductCategory;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;use Symfony\Component\HttpFoundation\Request;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Symfony\Component\HttpFoundation\Request;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 
 /**
  * Productcategory controller.
  *
  * @Route("product-category")
+ * @Security("has_role('ROLE_ADMIN') or has_role('ROLE_EDITOR')")
  */
 class ProductCategoryController extends Controller
 {
@@ -56,19 +59,6 @@ class ProductCategoryController extends Controller
         return $this->render('productcategory/new.html.twig', array(
             'productCategory' => $productCategory,
             'form' => $form->createView(),
-        ));
-    }
-
-    /**
-     * Finds and displays a productCategory entity.
-     *
-     * @Route("/{id}", name="product-category_show")
-     * @Method("GET")
-     */
-    public function showAction(ProductCategory $productCategory)
-    {
-        return $this->render('productcategory/show.html.twig', array(
-            'productCategory' => $productCategory
         ));
     }
 

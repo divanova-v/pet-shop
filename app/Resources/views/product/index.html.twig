@@ -3,12 +3,22 @@
 {% block body %}
     <h1>Products list</h1>
 
+    <div class="row">
+        <a class="col-md-2 col-md-offset-10 col-sm-3 col-sm-offset-9 col-xs-4 col-xs-offset-8 btn btn-success"
+           href="{{ path('product_new') }}">Add new product</a>
+    </div>
+    <div class="row">
+
     <table class="table">
         <thead>
             <tr>
                 <th>Id</th>
                 <th>Name</th>
                 <th>Image</th>
+                <th>Description</th>
+                <th>Price</th>
+                <th>Quality</th>
+                <th>Show order</th>
                 <th>Createdon</th>
                 <th>Updatedon</th>
                 <th>Actions</th>
@@ -17,29 +27,23 @@
         <tbody>
         {% for product in products %}
             <tr>
-                <td><a href="{{ path('product_show', { 'id': product.id }) }}">{{ product.id }}</a></td>
+                <td>{{ product.id }}</td>
                 <td>{{ product.name }}</td>
                 <td><img width="50px" src="/images/products/{{ product.image }}"/></td>
+                <td>{{ product.shopOffer.description }}</td>
+                <td>{{ product.shopOffer.price }}</td>
+                <td>{{ product.shopOffer.quantity }}</td>
+                <td>{{ product.shopOffer.showOrder }}</td>
                 <td>{% if product.createdOn %}{{ product.createdOn|date('Y-m-d H:i:s') }}{% endif %}</td>
                 <td>{% if product.updatedOn %}{{ product.updatedOn|date('Y-m-d H:i:s') }}{% endif %}</td>
                 <td>
-                    <ul>
-                        <li>
-                            <a href="{{ path('product_show', { 'id': product.id }) }}">show</a>
-                        </li>
-                        <li>
-                            <a href="{{ path('product_edit', { 'id': product.id }) }}">edit</a>
-                        </li>
-                    </ul>
+                    <a class="btn btn-info" href="{{ path('product_edit', { 'id': product.id }) }}">Edit</a>
+                    {% if product.isDeletable() or is_granted('ROLE_ADMIN') %}
+                        <a class="btn btn-danger" href="{{ path('product_edit', { 'id': product.id }) }}">Delete</a>
+                    {% endif %}
                 </td>
             </tr>
         {% endfor %}
         </tbody>
     </table>
-
-    <ul>
-        <li>
-            <a href="{{ path('product_new') }}">Create a new product</a>
-        </li>
-    </ul>
 {% endblock %}

@@ -2,7 +2,9 @@
 
 namespace AppBundle\Controller;
 
+use AppBundle\Entity\ProductCategory;
 use AppBundle\Entity\SaleOffer;
+use AppBundle\Form\FilterType;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;use Symfony\Component\HttpFoundation\Request;
@@ -18,19 +20,41 @@ class SaleOfferController extends Controller
      * Lists all saleOffer entities.
      *
      * @Route("/", name="saleoffer_index")
-     * @Method("GET")
+     * @param $category ProductCategory
      */
-    public function indexAction()
+    public function indexAction(ProductCategory $category = null)
     {
-        $em = $this->getDoctrine()->getManager();
 
-        $saleOffers = $em->getRepository('AppBundle:SaleOffer')
-            ->findBy([], ['createdOn' => 'DESC']);
+        $repo = $this->getDoctrine()->getRepository(SaleOffer::class);
+        $query = $repo->createQueryBuilder('so');
+        if(empty($category)){
+            $query = $query->where('so.quantity > 0')
+                ->orderBy('so.showOrder')
+                ->getQuery();
+        }
+        else{
+            $query = $query->where($query->expr()->andX(
+                $query->expr()->gt('so.quantity', '?1'),
+                $query->expr()->eq('so.product.category_id', '?2')
+            ))
+                ->orderBy('so.showOrder')
+                ->setParameters([
+                    1 => 0,
+                    2 => $category->getId()
+                ])
+                ->getQuery();
+        }
+        $saleOffers = $query->getResult();
+
+        $category = new ProductCategory();
+        $filterForm = $this->createForm(FilterType::class, $category);
 
         return $this->render('saleoffer/index.html.twig', array(
             'saleOffers' => $saleOffers,
+            'filterForm' => $filterForm->createView(),
         ));
     }
+
 
     /**
      * Creates a new saleOffer entity.

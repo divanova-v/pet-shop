@@ -2,11 +2,29 @@
 
 {% block main %}
     <h1>Sale Offers</h1>
+    <div class="row">
+        {{ form_start(filterForm) }}
+        {{ form_widget(filterForm) }}
+        <input class="btn btn-default" type="submit" value="Filter" />
+        {{ form_end(filterForm) }}
+    </div>
+    <div class="row">
     {% for saleOffer in saleOffers %}
         <div class="offer col-lg-3">
             <h4 class="text-center">{{ saleOffer.product.name }}</h4>
             <img class="col-lg-12" src="/images/products/{{ saleOffer.product.image }}"/>
-            <h4 class="text-right"><i><b>{{ saleOffer.price }}</b></i></h4>
+            <h4 class="col-md-6 text-left">
+                <i>
+                    <span>Quantity:{{ saleOffer.quantity }}</span>
+                </i>
+            </h4>
+            <h4 class="col-md-6 text-right">
+                <i>
+                    <b>
+                        <span>{{ saleOffer.price }}</span>
+                    </b>
+                </i>
+            </h4>
             <div>
                 <a href="{{ path('saleoffer_show', { 'id': saleOffer.id }) }}"
                    class="col-lg-5 btn btn-primary btn-sm active" role="button">
@@ -16,24 +34,14 @@
                     Add to cart
                 </a>
             </div>
-            {#
-            <div>
-                <a href="{{ path('saleoffer_edit', { 'id': saleOffer.id }) }}"
-                class="col-lg-5 btn btn-info btn-sm active">
-                    edit
-                </a>
-                <a href="{{ path('saleoffer_edit', { 'id': saleOffer.id }) }}"
-                class="col-lg-5 col-lg-offset-2 btn btn-danger btn-sm active">
-                    delete
-                </a>
-            </div>
-            #}
+
         </div>
     {% endfor %}
+    </div>
 
-    <ul>
-        <li>
-            <a href="{{ path('saleoffer_new') }}">Create a new saleOffer</a>
-        </li>
-    </ul>
+    {#<ul>#}
+        {#<li>#}
+            {#<a href="{{ path('saleoffer_new') }}">Create a new saleOffer</a>#}
+        {#</li>#}
+    {#</ul>#}
 {% endblock %}

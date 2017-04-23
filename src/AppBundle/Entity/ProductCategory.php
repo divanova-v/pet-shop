@@ -4,6 +4,8 @@ namespace AppBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
+
 
 /**
  * ProductCategory
@@ -26,6 +28,9 @@ class ProductCategory
      * @var string
      *
      * @ORM\Column(name="name", type="string", length=255, unique=true)
+     *
+     * @Assert\NotBlank(message="Category name can not be empty")
+     * @Assert\Length(max="255")
      */
     private $name;
 
@@ -33,6 +38,7 @@ class ProductCategory
      * @var Product[]|ArrayCollection
      * @ORM\OneToMany(targetEntity="AppBundle\Entity\Product", mappedBy="category")
      * @ORM\JoinColumn(name="category_id", referencedColumnName="id")
+     *
      */
     private $products;
 

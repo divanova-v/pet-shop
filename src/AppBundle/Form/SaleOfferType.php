@@ -4,6 +4,7 @@ namespace AppBundle\Form;
 
 use AppBundle\Entity\SaleOffer;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\MoneyType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -18,7 +19,8 @@ class SaleOfferType extends AbstractType
     {
         $builder
             ->add('description', TextareaType::class)
-            ->add('price', NumberType::class)
+            ->add('price', MoneyType::class)
+            //->add('price', MoneyType::class, ['currency' => 'BGN'])
             ->add('quantity', NumberType::class)
             ->add('showOrder', NumberType::class);
     }

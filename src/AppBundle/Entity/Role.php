@@ -2,6 +2,7 @@
 
 namespace AppBundle\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\Role\RoleInterface;
 
@@ -13,6 +14,10 @@ use Symfony\Component\Security\Core\Role\RoleInterface;
  */
 class Role implements RoleInterface
 {
+    const ROLE_USER = 'ROLE_USER',
+        ROLE_EDITOR = 'ROLE_EDITOR',
+        ROLE_ADMIN = 'ROLE_ADMIN';
+
     /**
      * @var int
      *
@@ -28,6 +33,16 @@ class Role implements RoleInterface
      * @ORM\Column(name="name", type="string", length=255, unique=true)
      */
     private $name;
+
+    /**
+     * @var ArrayCollection|User[]
+     */
+    private $users;
+
+    public function __construct()
+    {
+        $this->users = new ArrayCollection();
+    }
 
 
     /**
@@ -67,6 +82,10 @@ class Role implements RoleInterface
     public function getRole()
     {
         $this->getName();
+    }
+
+    public static function getDefaultRole(){
+        return self::ROLE_USER;
     }
 
 

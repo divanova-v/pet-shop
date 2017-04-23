@@ -4,6 +4,7 @@ namespace AppBundle\Controller;
 
 use AppBundle\Entity\SaleOffer;
 use AppBundle\Form\ProductType;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use AppBundle\Entity\Product;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -14,6 +15,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;use Symfony\Component
  * Product controller.
  *
  * @Route("product")
+ * @Security("has_role('ROLE_ADMIN') or has_role('ROLE_EDITOR')")
  */
 class ProductController extends Controller
 {
@@ -25,12 +27,30 @@ class ProductController extends Controller
      */
     public function indexAction()
     {
-        $em = $this->getDoctrine()->getManager();
+        $repo = $this->getDoctrine()->getRepository(Product::class);
+        $query = $repo->createQueryBuilder('p')
+            ->leftJoin('p.saleOffers',
+                'so',
+                'WITH',
+                'so.userId IS NULL')
+            //->addSelect('so')
+            ->orderBy('p.createdOn', 'DESC')
+            ->getQuery();
+        /**
+         * @var $products Product[]
+         */
+        $products = $query->getResult();
 
-        $products = $em->getRepository('AppBundle:Product')->findAll();
+        foreach ($products as $product){
+            /**
+             * @var $product Product
+             */
+            $product->setShopOffer($product->getSaleOffers()->current());
+        }
 
         return $this->render('product/index.html.twig', array(
             'products' => $products,
+
         ));
     }
 
@@ -78,28 +98,12 @@ class ProductController extends Controller
 
             $this->get('session')->getFlashBag()->add('success', 'Product is created');
 
-            return $this->redirectToRoute('product_show', array('id' => $product->getId()));
+            return $this->redirectToRoute('product_index');
         }
 
         return $this->render('product/new.html.twig', array(
             'product' => $product,
             'form' => $form->createView(),
-        ));
-    }
-
-    /**
-     * Finds and displays a product entity.
-     *
-     * @Route("/{id}", name="product_show")
-     * @Method("GET")
-     */
-    public function showAction(Product $product)
-    {
-        $deleteForm = $this->createDeleteForm($product);
-
-        return $this->render('product/show.html.twig', array(
-            'product' => $product,
-            'delete_form' => $deleteForm->createView(),
         ));
     }
 

@@ -67,6 +67,7 @@ class User2Product
     /**
      * @var Product
      * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Product", inversedBy="sales")
+     * @ORM\JoinColumn(name="product_id", referencedColumnName="id", onDelete="CASCADE")
      */
     private $product;
 
