@@ -1,0 +1,31 @@
+{% extends 'base.html.twig' %}
+
+{% block main %}
+
+    <h1>User products</h1>
+
+    <table class="table">
+        <thead>
+        <tr>
+            <th>Product Name</th>
+            <th>Product category</th>
+            <th>Image</th>
+            <th>Quantity</th>
+            <th>Bough on</th>
+        </tr>
+        </thead>
+        {% dump user.products %}
+        {% for userProduct in user.products %}
+            <tr>
+                <td>{{ userProduct.product.name }}</td>
+                <td><img width="50px" src="/images/products/{{ userProduct.product.image }}"/></td>
+                <td>{{ userProduct.product.category.name }}</td>
+                <td>{{ userProduct.quantity }}</td>
+                <td>{{ userProduct.createdOn|date('Y-m-d') }}</td>
+            </tr>
+        {% endfor %}
+    </table>
+
+
+    <a class="btn btn-default" href="{{ path('user_index') }}">Back to the list</a>
+{% endblock %}

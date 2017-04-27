@@ -14,11 +14,12 @@
             <tr>
                 <th>Id</th>
                 <th>Name</th>
+                <th>Category</th>
                 <th>Image</th>
                 <th>Description</th>
                 <th>Price</th>
-                <th>Quality</th>
-                <th>Show order</th>
+                <th>Quantity</th>
+                <th>Order</th>
                 <th>Createdon</th>
                 <th>Updatedon</th>
                 <th>Actions</th>
@@ -29,21 +30,24 @@
             <tr>
                 <td>{{ product.id }}</td>
                 <td>{{ product.name }}</td>
+                <td>{{ product.category.name }}</td>
                 <td><img width="50px" src="/images/products/{{ product.image }}"/></td>
                 <td>{{ product.shopOffer.description }}</td>
                 <td>{{ product.shopOffer.price }}</td>
                 <td>{{ product.shopOffer.quantity }}</td>
                 <td>{{ product.shopOffer.showOrder }}</td>
-                <td>{% if product.createdOn %}{{ product.createdOn|date('Y-m-d H:i:s') }}{% endif %}</td>
-                <td>{% if product.updatedOn %}{{ product.updatedOn|date('Y-m-d H:i:s') }}{% endif %}</td>
+                <td>{% if product.createdOn %}{{ product.createdOn|date('Y-m-d') }}{% endif %}</td>
+                <td>{% if product.updatedOn %}{{ product.updatedOn|date('Y-m-d') }}{% endif %}</td>
                 <td>
-                    <a class="btn btn-info" href="{{ path('product_edit', { 'id': product.id }) }}">Edit</a>
+                    <a class="btn btn-info btn-sm" href="{{ path('product_edit', { 'id': product.id }) }}">Edit</a>
                     {% if product.isDeletable() or is_granted('ROLE_ADMIN') %}
-                        <a class="btn btn-danger" href="{{ path('product_edit', { 'id': product.id }) }}">Delete</a>
+                        <a href="{{ path('product_delete', { 'id': product.id }) }}"
+                           class="btn btn-danger btn-sm" role="button">Delete</a>
                     {% endif %}
                 </td>
             </tr>
         {% endfor %}
         </tbody>
     </table>
+    </div>
 {% endblock %}

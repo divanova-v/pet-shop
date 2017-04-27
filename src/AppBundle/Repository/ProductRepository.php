@@ -2,6 +2,8 @@
 
 namespace AppBundle\Repository;
 
+use AppBundle\Entity\Product;
+
 /**
  * ProductRepository
  *
@@ -10,4 +12,46 @@ namespace AppBundle\Repository;
  */
 class ProductRepository extends \Doctrine\ORM\EntityRepository
 {
+    /**
+     * @param $id int
+     * @return Product|null
+     */
+    public function getShopProductAndOfferByProductId($id)
+    {
+        $query = $this->createQueryBuilder('p')
+            ->leftJoin('p.saleOffers',
+                'so',
+                'WITH',
+                'so.userId IS NULL')
+            ->where('p.id = :id')
+            ->orderBy('p.createdOn', 'DESC')
+            ->setParameters([
+                'id' => $id
+            ])
+            ->getQuery();
+        /**
+         * @var $product Product
+         */
+        return $query->getOneOrNullResult();
+    }
+
+    /**
+     * @return array
+     */
+    public function getShopProductsAndOffers(){
+        $query = $this
+            ->createQueryBuilder('p')
+            ->leftJoin('p.saleOffers',
+                'so',
+                'WITH',
+                'so.userId IS NULL')
+            ->orderBy('p.createdOn', 'DESC')
+            ->getQuery();
+        /**
+         * @var $products Product[]
+         */
+        return $query->getResult();
+    }
+
+
 }

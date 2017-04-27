@@ -63,7 +63,6 @@ class SaleOffer
      * @ORM\Column(name="quantity", type="integer")
      *
      * @Assert\NotBlank(message="What quantity of this product you offer to sale?")
-     * @Assert\Type(type="integer")
      */
     private $quantity;
 

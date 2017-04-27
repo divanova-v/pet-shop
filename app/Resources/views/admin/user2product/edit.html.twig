@@ -1,0 +1,13 @@
+{% extends 'base.html.twig' %}
+
+{% block main %}
+    <h1>User's product quantity edit</h1>
+
+    {{ form_start(edit_form) }}
+    {{ form_widget(edit_form) }}
+    <input class="btn btn-info" type="submit" value="Edit" />
+    <a class="btn btn-default" href="{{ path('user_products_index', {'id': userProduct.userId }) }}">Back to the list</a>
+
+    {{ form_end(edit_form) }}
+{% endblock %}
+

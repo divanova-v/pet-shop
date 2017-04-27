@@ -1,6 +1,9 @@
 <?php
 
 namespace AppBundle\Repository;
+use AppBundle\Entity\ProductCategory;
+use AppBundle\Entity\SaleOffer;
+use AppBundle\Entity\User;
 
 /**
  * SaleOfferRepository
@@ -10,4 +13,72 @@ namespace AppBundle\Repository;
  */
 class SaleOfferRepository extends \Doctrine\ORM\EntityRepository
 {
+    /**
+     * @param int $user
+     * @return array
+     */
+    public function getOffersByUserId($userId)
+    {
+        $query = $this->createQueryBuilder('so')
+            ->join('so.product', 'p')
+            ->where('so.userId = :id')
+            ->orderBy('so.createdOn', 'DESC')
+            ->setParameters([
+                'id' => $userId
+            ])
+            ->getQuery();
+        return $query->getResult();
+    }
+
+    /**
+     * @param $ids []
+     * @return array
+     */
+    public function getOffersById($ids)
+    {
+        $qb = $this->createQueryBuilder('so');
+        $qb->where($qb->expr()->in('so.id', ':ids'));
+        $qb->setParameters([
+            'ids' => $ids
+        ]);
+
+        $query = $qb->getQuery();
+
+        return $query->getResult();
+    }
+
+    /**
+     * find sale offers with available quantity more than 0
+     * @return SaleOffer[]
+     */
+    public function getAvailableSaleOffers()
+    {
+        $qb = $this->createQueryBuilder('so');
+        $query = $qb->where('so.quantity > 0')
+            ->orderBy('so.showOrder')
+            ->getQuery();
+        return $query->getResult();
+    }
+
+    /**
+     * @param ProductCategory $category
+     * @return SaleOffer[]
+     */
+
+    public function getSaleOffersByCategory(ProductCategory $category)
+    {
+        $qb = $this->createQueryBuilder('so');
+        $query = $qb->join('so.product', 'p')
+            ->where($qb->expr()->andX(
+                $qb->expr()->gt('so.quantity', '?1'),
+                $qb->expr()->eq('p.category', '?2')
+            ))
+            ->orderBy('so.showOrder')
+            ->setParameters([
+                1 => 0,
+                2 => $category->getId()
+            ])
+            ->getQuery();
+        return $query->getResult();
+    }
 }

@@ -3,6 +3,8 @@
 namespace AppBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Security\Core\Validator\Constraints\UserPassword;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * User2Product
@@ -25,7 +27,6 @@ class User2Product
      * @var int
      *
      * @ORM\Column(name="user_id", type="integer")
-     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\User", inversedBy="products")
      */
     private $userId;
 
@@ -39,7 +40,7 @@ class User2Product
     /**
      * @var int
      *
-     * @ORM\Column(name="sale_offer_id", type="integer")
+     * @ORM\Column(name="sale_offer_id", type="integer", nullable=true)
      */
     private $saleOfferId;
 
@@ -47,6 +48,8 @@ class User2Product
      * @var int
      *
      * @ORM\Column(name="quantity", type="integer")
+     * @Assert\GreaterThan(0)
+     * @Assert\NotBlank(message="Product quantity can not be blank")
      */
     private $quantity;
 
@@ -76,6 +79,12 @@ class User2Product
      * @ORM\ManyToOne(targetEntity="AppBundle\Entity\SaleOffer", inversedBy="soldProducts")
      */
     private $saleOffer;
+
+    /**
+     * @var User
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\User", inversedBy="products")
+     */
+    private $user;
 
     /**
      * Get id
@@ -238,6 +247,24 @@ class User2Product
     {
         $this->updatedOn = $updatedOn;
     }
+
+    /**
+     * @return User
+     */
+    public function getUser()
+    {
+        return $this->user;
+    }
+
+    /**
+     * @param User $user
+     */
+    public function setUser($user)
+    {
+        $this->user = $user;
+    }
+
+
 
 
 }

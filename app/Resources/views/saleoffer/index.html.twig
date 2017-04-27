@@ -5,7 +5,8 @@
     <div class="row">
         {{ form_start(filterForm) }}
         {{ form_widget(filterForm) }}
-        <input class="btn btn-default" type="submit" value="Filter" />
+        <input class="btn btn-info" type="submit" value="Filter" />
+        <a href="{{ path('saleoffer_index') }}" class="btn btn-default" role="button">Clear filter</a>
         {{ form_end(filterForm) }}
     </div>
     <div class="row">

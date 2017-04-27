@@ -1,0 +1,29 @@
+{% extends 'base.html.twig' %}
+
+{% block main %}
+    <h1>My shopping cart</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Product</th>
+                <th>Image</th>
+                <th>Offer</th>
+                <th>Quantity</th>
+                <th>Price</th>
+            </tr>
+        </thead>
+        {% for offer in saleOffers %}
+            <tr>
+                <td>{{ offer.product.name }}</td>
+                <td><img alt="product_image" width="50px" src="/images/products/{{ offer.product.image }}"/></td>
+                <td><a href="{{ path('saleoffer_show', {'id': offer.id}) }}">View Offer</a></td>
+                <td>{{ offer.quantity }}</td>
+                <td>{{ offer.price }}</td>
+            </tr>
+        {% endfor %}
+
+    </table>
+    {{ totalPrice }}
+
+{%  endblock %}

@@ -1,0 +1,31 @@
+{% extends 'base.html.twig' %}
+
+{% block main %}
+    <h1>User</h1>
+
+    <table class="table">
+        <tbody>
+            <tr>
+                <th>Id</th>
+                <td>{{ user.id }}</td>
+            </tr>
+            <tr>
+                <th>Email</th>
+                <td>{{ user.email }}</td>
+            </tr>
+            <tr>
+                <th>Fullname</th>
+                <td>{{ user.fullName }}</td>
+            </tr>
+            <tr>
+                <th>Cash</th>
+                <td>{{ user.cash }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+
+
+    <a class="btn btn-default" href="{{ path('user_index') }}">Back to the list</a>
+
+{% endblock %}

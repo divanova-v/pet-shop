@@ -66,8 +66,8 @@ class User implements UserInterface
     private $password_row;
 
     /**
-     * @var Product[]|ArrayCollection
-     * @ORM\OneToMany(targetEntity="AppBundle\Entity\User2Product", mappedBy="userId")
+     * @var User2Product[]|ArrayCollection
+     * @ORM\OneToMany(targetEntity="AppBundle\Entity\User2Product", mappedBy="user")
      */
     private $products;
 

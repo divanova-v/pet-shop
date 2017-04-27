@@ -1,60 +1,94 @@
 {% extends 'base.html.twig' %}
 
-{% block body %}
-    <h1>Saleoffer</h1>
+{% block main %}
+    <div class="row">
+        <h1 class="text-center product-name">{{ saleOffer.product.name }}</h1>
 
-    <table>
-        <tbody>
-            <tr>
-                <th>Id</th>
-                <td>{{ saleOffer.id }}</td>
-            </tr>
-            <tr>
-                <th>Productid</th>
-                <td>{{ saleOffer.productId }}</td>
-            </tr>
-            <tr>
-                <th>Userid</th>
-                <td>{{ saleOffer.userId }}</td>
-            </tr>
-            <tr>
-                <th>Description</th>
-                <td>{{ saleOffer.description }}</td>
-            </tr>
-            <tr>
-                <th>Price</th>
-                <td>{{ saleOffer.price }}</td>
-            </tr>
-            <tr>
-                <th>Quantity</th>
-                <td>{{ saleOffer.quantity }}</td>
-            </tr>
-            <tr>
-                <th>Showorder</th>
-                <td>{{ saleOffer.showOrder }}</td>
-            </tr>
-            <tr>
-                <th>Createdon</th>
-                <td>{% if saleOffer.createdOn %}{{ saleOffer.createdOn|date('Y-m-d H:i:s') }}{% endif %}</td>
-            </tr>
-            <tr>
-                <th>Updatedon</th>
-                <td>{% if saleOffer.updatedOn %}{{ saleOffer.updatedOn|date('Y-m-d H:i:s') }}{% endif %}</td>
-            </tr>
-        </tbody>
-    </table>
+        <div class="row">
+            <div class="product-image col-md-4 text-center">
+                <img alt="product-image" src="/images/products/{{ saleOffer.product.image }}">
+            </div>
+            <div class="col-md-8">
+                <div class="row">
+                    <div class="type-info col-md-4">
+                        <p class="text-right"><strong>Product category:</strong></p>
+                    </div>
+                    <div class="col-md-8">
+                        <p class="text-left">{{ saleOffer.product.category.name }}</p>
+                    </div>
+                    <div class="type-info col-md-4">
+                        <p class="text-right"><strong>Description:</strong></p>
+                    </div>
+                    <div class="col-md-8">
+                        <p class="text-left">{{ saleOffer.description }}</p>
+                    </div>
+                    <div class="type-info col-md-4">
+                        <p class="text-right"><strong>Saler:</strong></p>
+                    </div>
+                    <div class="col-md-8">
+                        {% if saleOffer.user %}
+                        <p class="text-left">{{ saleOffer.user.fullName }}</p>
+                        {% else %}
+                        <p class="text-left">Yudjie Shop</p>
+                        {% endif %}
+                    </div>
+                    <div class="type-info col-md-4">
+                        <p class="text-right"><strong>Price:</strong></p>
+                    </div>
+                    <div class="col-md-8">
+                        <p class="text-left">{{ saleOffer.price }}</p>
+                    </div>
+                    <div class="type-info col-md-4">
+                        <p class="text-right"><strong>Available quantity:</strong></p>
+                    </div>
+                    <div class="col-md-8">
+                        <p class="text-left">{{ saleOffer.quantity }}</p>
+                    </div>
+                    <div class="type-info col-md-4">
+                        <p class="text-right"><strong>Added on:</strong></p>
+                    </div>
+                    <div class="col-md-8">
+                        <p class="text-left">{% if saleOffer.createdOn %}{{ saleOffer.createdOn|date('Y-m-d') }}{% endif %}</p>
+                    </div>
 
-    <ul>
-        <li>
-            <a href="{{ path('saleoffer_index') }}">Back to the list</a>
-        </li>
-        <li>
-            <a href="{{ path('saleoffer_edit', { 'id': saleOffer.id }) }}">Edit</a>
-        </li>
-        <li>
-            {{ form_start(delete_form) }}
-                <input type="submit" value="Delete">
-            {{ form_end(delete_form) }}
-        </li>
-    </ul>
+                    {% if app.user and app.user != saleOffer.user %}
+                        {{ form_start(form) }}
+                        {{ form_label(form.quantity, 'Select Quantity',
+                            {'label_attr' : {'class': 'col-md-4 text-right'}}
+                        ) }}
+                        <div class="col-md-8">
+                        {{ form_widget(form.quantity,
+                            {'attr': {
+                                'max': saleOffer.quantity,
+                                'min': 1,
+                                'value': 1
+                                }
+                            }
+                            ) }}
+                        </div>
+                        <div class="col-md-8 col-md-offset-4 actions">
+                            <button class="btn btn-info" type="submit" >
+                                <img width="20" alt="cart" src="{{ asset('images/cart.png') }}" />
+                                Add to cart
+                            </button>
+                            <a  class="btn btn-default" href="{{ path('saleoffer_index') }}">Back to the list</a>
+                        </div>
+                        {{ form_end(form) }}
+
+                    {% else %}
+                        <div class="col-md-8 col-md-offset-4 actions">
+                            <a class="btn btn-danger" href="{{ path('saleoffer_edit', { 'id': saleOffer.id }) }}">Stop selling</a>
+                            <a  class="btn btn-default" href="{{ path('saleoffer_index') }}">Back to the list</a>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+
+        </div>
+
+
+    </div>
 {% endblock %}

@@ -12,7 +12,7 @@ class FilterType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder->add('name', EntityType::class,
+        $builder->add('category', EntityType::class,
             [
                 'class' => ProductCategory::class,
                 'placeholder' => 'Choose a category',
@@ -23,9 +23,9 @@ class FilterType extends AbstractType
 
     public function configureOptions(OptionsResolver $resolver)
     {
-        $resolver->setDefaults(array(
-            'data_class' => ProductCategory::class
-        ));
+//        $resolver->setDefaults(array(
+//            'data_class' => ProductCategory::class
+//        ));
     }
 
     public function getBlockPrefix()

@@ -1,6 +1,6 @@
 <?php
 
-namespace AppBundle\Controller;
+namespace AppBundle\Controller\Admin;
 
 use AppBundle\Entity\ProductCategory;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -12,7 +12,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 /**
  * Productcategory controller.
  *
- * @Route("product-category")
+ * @Route("admin/product-category")
  * @Security("has_role('ROLE_ADMIN') or has_role('ROLE_EDITOR')")
  */
 class ProductCategoryController extends Controller
@@ -29,7 +29,7 @@ class ProductCategoryController extends Controller
 
         $productCategories = $em->getRepository('AppBundle:ProductCategory')->findAll();
 
-        return $this->render('productcategory/index.html.twig', array(
+        return $this->render('admin/productcategory/index.html.twig', array(
             'productCategories' => $productCategories,
         ));
     }
@@ -56,7 +56,7 @@ class ProductCategoryController extends Controller
             return $this->redirectToRoute('product-category_index');
         }
 
-        return $this->render('productcategory/new.html.twig', array(
+        return $this->render('admin/productcategory/new.html.twig', array(
             'productCategory' => $productCategory,
             'form' => $form->createView(),
         ));
@@ -80,7 +80,7 @@ class ProductCategoryController extends Controller
             return $this->redirectToRoute('product-category_index');
         }
 
-        return $this->render('productcategory/edit.html.twig', array(
+        return $this->render('admin/productcategory/edit.html.twig', array(
             'productCategory' => $productCategory,
             'edit_form' => $editForm->createView()
         ));
@@ -90,15 +90,41 @@ class ProductCategoryController extends Controller
      * Deletes a productCategory entity.
      *
      * @Route("/delete/{id}", name="product-category_delete")
+     * @Method({"GET", "DELETE"})
      */
     public function deleteAction(Request $request, ProductCategory $productCategory)
     {
+        $form = $this->createDeleteForm($productCategory);
+        $form->handleRequest($request);
 
-        $em = $this->getDoctrine()->getManager();
-        $em->remove($productCategory);
-        $em->flush();
+        if ($form->isSubmitted() && $form->isValid()) {
+            $em = $this->getDoctrine()->getManager();
+            $em->remove($productCategory);
+            $em->flush();
 
-        $this->get('session')->getFlashBag()->add('success', 'Product category is deleted');
-        return $this->redirectToRoute('product-category_index');
+            $this->get('session')->getFlashBag()->add('success', 'Product category is deleted');
+            return $this->redirectToRoute('product-category_index');
+        }
+
+        return $this->render('admin/delete.html.twig', [
+            'message' => 'product category',
+            'deleteForm' => $form->createView()
+        ]);
+
+    }
+
+    /**
+     * Creates a form to delete a product entity.
+     *
+     * @param Product $product The product entity
+     *
+     * @return \Symfony\Component\Form\Form The form
+     */
+    private function createDeleteForm(ProductCategory $productCategory)
+    {
+        return $this->createFormBuilder()
+            ->setAction($this->generateUrl('product-category_delete', array('id' => $productCategory->getId())))
+            ->setMethod('DELETE')
+            ->getForm();
     }
 }

@@ -4,10 +4,14 @@ namespace AppBundle\Controller;
 
 use AppBundle\Entity\ProductCategory;
 use AppBundle\Entity\SaleOffer;
+use AppBundle\Entity\User2Product;
 use AppBundle\Form\FilterType;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;use Symfony\Component\HttpFoundation\Request;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Symfony\Component\Form\Extension\Core\Type\NumberType;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Saleoffer controller.
@@ -16,38 +20,27 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;use Symfony\Component
  */
 class SaleOfferController extends Controller
 {
+
     /**
      * Lists all saleOffer entities.
      *
      * @Route("/", name="saleoffer_index")
-     * @param $category ProductCategory
+     * @param Request $request
+     * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function indexAction(ProductCategory $category = null)
+    public function indexAction(Request $request)
     {
-
+        $filterForm = $this->createForm(FilterType::class);
+        $filterForm->handleRequest($request);
         $repo = $this->getDoctrine()->getRepository(SaleOffer::class);
-        $query = $repo->createQueryBuilder('so');
-        if(empty($category)){
-            $query = $query->where('so.quantity > 0')
-                ->orderBy('so.showOrder')
-                ->getQuery();
+        if ($filterForm->isSubmitted() && $filterForm->isValid()) {
+            //filter sale offers
+            $category = $filterForm->getData()['category'];
+            $saleOffers = $repo->getSaleOffersByCategory($category);
         }
         else{
-            $query = $query->where($query->expr()->andX(
-                $query->expr()->gt('so.quantity', '?1'),
-                $query->expr()->eq('so.product.category_id', '?2')
-            ))
-                ->orderBy('so.showOrder')
-                ->setParameters([
-                    1 => 0,
-                    2 => $category->getId()
-                ])
-                ->getQuery();
+            $saleOffers = $repo->getAvailableSaleOffers();
         }
-        $saleOffers = $query->getResult();
-
-        $category = new ProductCategory();
-        $filterForm = $this->createForm(FilterType::class, $category);
 
         return $this->render('saleoffer/index.html.twig', array(
             'saleOffers' => $saleOffers,
@@ -61,6 +54,7 @@ class SaleOfferController extends Controller
      *
      * @Route("/new", name="saleoffer_new")
      * @Method({"GET", "POST"})
+     * @Security("has_role('ROLE_USER')")
      */
     public function newAction(Request $request)
     {
@@ -90,11 +84,13 @@ class SaleOfferController extends Controller
      */
     public function showAction(SaleOffer $saleOffer)
     {
-        $deleteForm = $this->createDeleteForm($saleOffer);
+        $form = $this->createFormBuilder()
+            ->add('quantity', NumberType::class)
+            ->getForm();
 
         return $this->render('saleoffer/show.html.twig', array(
             'saleOffer' => $saleOffer,
-            'delete_form' => $deleteForm->createView(),
+            'form' => $form->createView()
         ));
     }
 
@@ -106,41 +102,49 @@ class SaleOfferController extends Controller
      */
     public function editAction(Request $request, SaleOffer $saleOffer)
     {
-        $deleteForm = $this->createDeleteForm($saleOffer);
         $editForm = $this->createForm('AppBundle\Form\SaleOfferType', $saleOffer);
         $editForm->handleRequest($request);
 
         if ($editForm->isSubmitted() && $editForm->isValid()) {
             $this->getDoctrine()->getManager()->flush();
 
-            return $this->redirectToRoute('saleoffer_edit', array('id' => $saleOffer->getId()));
+            $this->get('session')->getFlashBag()->add('success', 'Sale offer is edited');
+            return $this->redirectToRoute('user_products_in_sale', ['id' => $saleOffer->getUser()->getId()]);
         }
 
         return $this->render('saleoffer/edit.html.twig', array(
             'saleOffer' => $saleOffer,
             'edit_form' => $editForm->createView(),
-            'delete_form' => $deleteForm->createView(),
         ));
     }
 
     /**
      * Deletes a saleOffer entity.
      *
-     * @Route("/{id}", name="saleoffer_delete")
-     * @Method("DELETE")
+     * @Route("/{id}/delete", name="saleoffer_delete")
+     * @Method({"GET", "DELETE"})
+     * @Security("has_role('ROLE_ADMIN')")
      */
     public function deleteAction(Request $request, SaleOffer $saleOffer)
     {
         $form = $this->createDeleteForm($saleOffer);
         $form->handleRequest($request);
 
+        $userId = $saleOffer->getUserId();
+
         if ($form->isSubmitted() && $form->isValid()) {
             $em = $this->getDoctrine()->getManager();
             $em->remove($saleOffer);
             $em->flush();
+
+            $this->addFlash('success', 'Sale offer is deleted');
+            return $this->redirectToRoute('user_products_in_sale', ['id' => $userId]);
         }
 
-        return $this->redirectToRoute('saleoffer_index');
+        return $this->render('admin/delete.html.twig', [
+            'message' => 'sale offer',
+            'deleteForm'=> $form->createView(),
+        ]);
     }
 
     /**

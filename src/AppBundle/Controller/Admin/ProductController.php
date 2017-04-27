@@ -1,6 +1,6 @@
 <?php
 
-namespace AppBundle\Controller;
+namespace AppBundle\Controller\Admin;
 
 use AppBundle\Entity\SaleOffer;
 use AppBundle\Form\ProductType;
@@ -14,7 +14,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;use Symfony\Component
 /**
  * Product controller.
  *
- * @Route("product")
+ * @Route("admin/product")
  * @Security("has_role('ROLE_ADMIN') or has_role('ROLE_EDITOR')")
  */
 class ProductController extends Controller
@@ -27,28 +27,17 @@ class ProductController extends Controller
      */
     public function indexAction()
     {
-        $repo = $this->getDoctrine()->getRepository(Product::class);
-        $query = $repo->createQueryBuilder('p')
-            ->leftJoin('p.saleOffers',
-                'so',
-                'WITH',
-                'so.userId IS NULL')
-            //->addSelect('so')
-            ->orderBy('p.createdOn', 'DESC')
-            ->getQuery();
         /**
          * @var $products Product[]
          */
-        $products = $query->getResult();
-
+        $products = $this
+            ->getDoctrine()
+            ->getRepository(Product::class)
+            ->getShopProductsAndOffers();
         foreach ($products as $product){
-            /**
-             * @var $product Product
-             */
             $product->setShopOffer($product->getSaleOffers()->current());
         }
-
-        return $this->render('product/index.html.twig', array(
+        return $this->render('admin/product/index.html.twig', array(
             'products' => $products,
 
         ));
@@ -70,13 +59,10 @@ class ProductController extends Controller
 
         if ($form->isSubmitted() && $form->isValid()) {
             $product->setCategoryId($product->getCategory()->getId());
-
             $product->setCreatedOn(new \DateTime());
             $product->setUpdatedOn(new \DateTime());
             $offer->setCreatedOn(new \DateTime());
             $offer->setUpdatedOn(new \DateTime());
-           // $offer->setUserId(null);
-
             /** @var UploadedFile $file */
             $file = $product->getUploadedImage();
             $filename = md5(
@@ -101,7 +87,7 @@ class ProductController extends Controller
             return $this->redirectToRoute('product_index');
         }
 
-        return $this->render('product/new.html.twig', array(
+        return $this->render('admin/product/new.html.twig', array(
             'product' => $product,
             'form' => $form->createView(),
         ));
@@ -112,18 +98,24 @@ class ProductController extends Controller
      *
      * @Route("/{id}/edit", name="product_edit")
      * @Method({"GET", "POST"})
+     * @param $request Request
+     * @param $id int
      */
-    public function editAction(Request $request, Product $product)
+    public function editAction(Request $request, $id)
     {
-        $deleteForm = $this->createDeleteForm($product);
+        /**
+         * @var $product Product
+         */
+        $product = $this->getDoctrine()
+            ->getRepository(Product::class)
+            ->getShopProductAndOfferByProductId($id);
+
         $editForm = $this->createForm(ProductType::class, $product);
         $editForm->handleRequest($request);
 
         if ($editForm->isSubmitted() && $editForm->isValid()) {
             $product->setUpdatedOn(new \DateTime());
             if($product->getUploadedImage() instanceof UploadedFile){
-
-
                 /** @var UploadedFile $file */
                 $file = $product->getImage();
                 $filename = md5(
@@ -138,36 +130,47 @@ class ProductController extends Controller
             }
 
             $this->getDoctrine()->getManager()->flush();
-
-            $this->get('session')->getFlashBag()->add('success', 'Product is edited');
+            $this->addFlash('success', 'Product is edited');
             return $this->redirectToRoute('product_index');
         }
 
-        return $this->render('product/edit.html.twig', array(
+        return $this->render('admin/product/edit.html.twig', array(
             'product' => $product,
             'edit_form' => $editForm->createView(),
-            'delete_form' => $deleteForm->createView(),
         ));
     }
 
     /**
      * Deletes a product entity.
      *
-     * @Route("/{id}", name="product_delete")
-     * @Method("DELETE")
+     * @Route("/delete/{id}", name="product_delete")
+     * @Method({"GET", "DELETE"})
      */
     public function deleteAction(Request $request, Product $product)
     {
-        $form = $this->createDeleteForm($product);
-        $form->handleRequest($request);
+        if(($product->isDeletable() && true === $this->get('security.authorization_checker')->isGranted('ROLE_EDITOR'))
+            || true === $this->get('security.authorization_checker')->isGranted('ROLE_ADMIN')
+        ) {
+            $form = $this->createDeleteForm($product);
+            $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            $em = $this->getDoctrine()->getManager();
-            $em->remove($product);
-            $em->flush();
+            if ($form->isSubmitted() && $form->isValid()) {
+                $em = $this->getDoctrine()->getManager();
+                $em->remove($product);
+                $em->flush();
+                $this->get('session')->getFlashBag()->add('success', 'Product is deleted');
+                return $this->redirectToRoute('product_index');
+            }
+
+            return $this->render('admin/delete.html.twig', [
+                'message' => 'product',
+                'deleteForm' => $form->createView()
+            ]);
+        }
+        else{
+            throw $this->createAccessDeniedException('Unable to access this page!');
         }
 
-        return $this->redirectToRoute('product_index');
     }
 
     /**

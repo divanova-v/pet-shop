@@ -2,10 +2,11 @@
 <html>
     <head>
         <meta charset="UTF-8" />
-        <title>{% block title %}Yudjie Pet Shop{% endblock %}</title>
+        <title>{% block title %}Yudjie Shop{% endblock %}</title>
         {% block stylesheets %}
             <link rel="stylesheet" href="{{ asset('css/style.css') }}">
             <link rel="stylesheet" href="{{ asset('css/bootstrap-datetimepicker.min.css') }}">
+            <link rel="stylesheet" href="{{ asset('css/main.css') }}">
         {% endblock %}
         <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}"/>
 
@@ -18,15 +19,8 @@
             <div class="navbar navbar-default navbar-static-top" role="navigation">
                 <div class="container">
                     <div class="navbar-header">
-                        <a href="{{ path('homepage') }}" class="navbar-brand">SHOPPING CART</a>
-                        {% if is_granted('ROLE_ADMIN') or is_granted('ROLE_EDITOR') %}
-                            <a href="{{ path('product_index') }}" class="navbar-brand">
-                                Products
-                            </a>
-                            <a href="{{ path('product-category_index') }}" class="navbar-brand">
-                                 Categories
-                            </a>
-                        {% endif %}
+                        <a href="{{ path('saleoffer_index') }}" class="navbar-brand">YUDJIE</a>
+
                         <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
                             <span class="icon-bar"></span>
                             <span class="icon-bar"></span>
@@ -35,7 +29,24 @@
                     </div>
                     <div class="navbar-collapse collapse">
                         <ul class="nav navbar-nav navbar-right">
-
+                            {% if is_granted('ROLE_ADMIN') %}
+                                <li>
+                                    <a href="{{ path('user_index') }}" >Users</a>
+                                </li>
+                            {% endif %}
+                            {% if is_granted('ROLE_ADMIN') or is_granted('ROLE_EDITOR') %}
+                                <li>
+                                    <a href="{{ path('product_index') }}" >Products</a>
+                                </li>
+                                <li>
+                                    <a href="{{ path('product-category_index') }}">Categories</a>
+                                </li>
+                            {% endif %}
+                                <li>
+                                    <a href="{{ path('shopping_cart_index') }}">
+                                        <img width="20" alt="cart" src="{{ asset('images/cart.png') }}" />
+                                    </a>
+                                </li>
                             {% if is_granted('ROLE_USER') %}
                                 <li>
                                     <a href="">
@@ -69,6 +80,7 @@
     {% endblock %}
 
     <div class="container body-container">
+        {# success messages #}
         <div class="row">
         {% if app.session.flashBag.has('success') %}
                 {% for message in app.session.flashBag.get('success') %}
@@ -81,8 +93,21 @@
                 {% endfor %}
         {% endif %}
         </div>
-        {% block body %}
+        {# error messages #}
+        <div class="row">
+            {% if app.session.flashBag.has('error') %}
+                {% for message in app.session.flashBag.get('error') %}
+                    <div class="alert alert-danger alert-dismissable" role="alert">
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        </div>
 
+        {% block body %}
             <div class="row">
                 <div id="main" class="col-lg-12">
                     {% block main %}{% endblock %}
@@ -94,14 +119,14 @@
     {% block footer %}
         <footer>
             <div class="container modal-footer">
-                <p>&copy; 2016 - Software University Foundation</p>
+                <p>&copy; 2017 - Yudjie Shopping cart</p>
             </div>
         </footer>
     {% endblock %}
 
     {% block javascripts %}
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-        <script src="{{ asset('js/moment.min.js') }}"></script>
+        <script src="{{ asset('js/moment.js') }}"></script>
         <script src="{{ asset('js/bootstrap.js') }}"></script>
         <script src="{{ asset('js/bootstrap-datetimepicker.min.js') }}"></script>
     {% endblock %}

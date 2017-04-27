@@ -10,4 +10,20 @@ namespace AppBundle\Repository;
  */
 class User2ProductRepository extends \Doctrine\ORM\EntityRepository
 {
+    /**
+     * @param int $userId
+     * @return array
+     */
+    public function getUserProductsByUserId($userId)
+    {
+        $query = $this->createQueryBuilder('up')
+            ->join('up.product', 'p')
+            ->where('up.userId = :id')
+            ->orderBy('up.createdOn', 'DESC')
+            ->setParameters([
+                'id' => $userId
+            ])
+            ->getQuery();
+        return $query->getResult();
+    }
 }
