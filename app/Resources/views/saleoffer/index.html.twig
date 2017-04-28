@@ -1,28 +1,25 @@
 {% extends 'base.html.twig' %}
 
 {% block main %}
-    <h1>Sale Offers</h1>
     <div class="row">
-        {{ form_start(filterForm) }}
-        {{ form_widget(filterForm) }}
-        <input class="btn btn-info" type="submit" value="Filter" />
-        <a href="{{ path('saleoffer_index') }}" class="btn btn-default" role="button">Clear filter</a>
-        {{ form_end(filterForm) }}
+        <div class="col-sm-4 col-sm-offset-8 col-xs-12">
+            {{ form_start(filterForm) }}
+            {{ form_widget(filterForm) }}
+            <input class="btn btn-info" type="submit" value="Filter" />
+            <a href="{{ path('saleoffer_index') }}" class="btn btn-default" role="button">Clear filter</a>
+            {{ form_end(filterForm) }}
+        </div>
     </div>
     <div class="row">
     {% for saleOffer in saleOffers %}
         <div class="offer col-lg-3">
             <h4 class="text-center">{{ saleOffer.product.name }}</h4>
             <img class="col-lg-12" src="/images/products/{{ saleOffer.product.image }}"/>
-            <h4 class="col-md-6 text-left">
-                <i>
-                    <span>Quantity:{{ saleOffer.quantity }}</span>
-                </i>
-            </h4>
-            <h4 class="col-md-6 text-right">
-                <i>
+
+            <h4 class="text-right">
+                <i>Price:
                     <b>
-                        <span>{{ saleOffer.price }}</span>
+                        <span>{{ saleOffer.price|localizedcurrency('EUR') }}</span>
                     </b>
                 </i>
             </h4>
@@ -31,9 +28,25 @@
                    class="col-lg-5 btn btn-primary btn-sm active" role="button">
                     view
                 </a>
-                <a href="#" class="col-lg-5 col-lg-offset-2 btn btn-primary btn-sm active" role="button" >
-                    Add to cart
-                </a>
+                {#{% if app.user and app.user != saleOffer.user %}#}
+                    {{ form_start(form, {
+                        'action': path('saleoffer_add_to_cart', {'id':saleOffer.id}),
+                        'method': 'POST'}) }}
+                        {{ form_widget(form.quantity,
+                        {'attr': {
+                            'max': saleOffer.quantity,
+                            'min': 1,
+                            'value': 1,
+                            'class': 'hidden'
+                        }
+                        }
+                        ) }}
+                        <button class="col-lg-5 col-lg-offset-2 btn btn-primary btn-sm active" type="submit" >
+                            <img width="20" alt="cart" src="{{ asset('images/cart.png') }}" />
+                            Add to cart
+                        </button>
+                    {{ form_end(form) }}
+                {#{% endif %}#}
             </div>
 
         </div>

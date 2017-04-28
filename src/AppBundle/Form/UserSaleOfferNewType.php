@@ -23,7 +23,7 @@ class UserSaleOfferNewType extends SaleOfferType
                 'class' => Product::class,
                 'placeholder' => 'Choose a product',
                 'choice_label' => 'name',
-                'query_builder' => function (ProductRepository $er) {
+                'query_builder' => function (ProductRepository $er) use ($options) {
                     $query = $er
                         ->createQueryBuilder('p')
                         ->join('p.sales',
@@ -31,7 +31,7 @@ class UserSaleOfferNewType extends SaleOfferType
                             'WITH',
                             'sp.userId = :id')
                         ->orderBy('p.createdOn', 'DESC')
-                        ->setParameters(['id' => 1]);
+                        ->setParameters(['id' => $options['userId']]);
                     return $query;
                 }
             ]);
@@ -41,7 +41,8 @@ class UserSaleOfferNewType extends SaleOfferType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults(array(
-            'data_class' => SaleOffer::class
+            'data_class' => SaleOffer::class,
+            'userId' => null,
         ));
     }
 

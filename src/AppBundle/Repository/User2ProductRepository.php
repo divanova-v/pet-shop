@@ -2,6 +2,7 @@
 
 namespace AppBundle\Repository;
 
+
 /**
  * User2ProductRepository
  *
@@ -25,5 +26,23 @@ class User2ProductRepository extends \Doctrine\ORM\EntityRepository
             ])
             ->getQuery();
         return $query->getResult();
+    }
+
+    /**
+     * @param $userId int
+     * @param $productId int
+     * @return User2Product
+     */
+    public function getUserProductByUserIdAndProductId($userId, $productId)
+    {
+        $query = $this->createQueryBuilder('up')
+            ->where('up.userId = :userId')
+            ->andWhere('up.productId = :productId')
+            ->setParameters([
+                'userId' => $userId,
+                'productId' => $productId,
+            ])
+            ->getQuery();
+        return $query->getSingleResult();
     }
 }

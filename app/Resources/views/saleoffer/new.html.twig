@@ -6,7 +6,7 @@
     {{ form_start(form) }}
         {{ form_widget(form) }}
         <input class="btn btn-info" type="submit" value="Create" />
-        <a class="btn btn-default" href="{{ path('saleoffer_index') }}">Back to the list</a>
+        <a class="btn btn-default" href="{{ path('user_products_in_sale', {'id': user.id}) }}">Back to the list</a>
     {{ form_end(form) }}
 
 {% endblock %}

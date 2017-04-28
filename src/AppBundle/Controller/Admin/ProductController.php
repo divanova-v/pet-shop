@@ -27,16 +27,19 @@ class ProductController extends Controller
      */
     public function indexAction()
     {
+        $productRepo = $this
+            ->getDoctrine()
+            ->getRepository(Product::class);
         /**
          * @var $products Product[]
          */
-        $products = $this
-            ->getDoctrine()
-            ->getRepository(Product::class)
-            ->getShopProductsAndOffers();
-        foreach ($products as $product){
-            $product->setShopOffer($product->getSaleOffers()->current());
+        $products = $productRepo->getShopProductsAndOffers();
+
+        foreach($products as $product){
+            $count = $productRepo->countSaleOffersByProductId($product);
+            $product->setIsDeletable($count);
         }
+
         return $this->render('admin/product/index.html.twig', array(
             'products' => $products,
 
@@ -143,7 +146,7 @@ class ProductController extends Controller
     /**
      * Deletes a product entity.
      *
-     * @Route("/delete/{id}", name="product_delete")
+     * @Route("/{id}/delete", name="product_delete")
      * @Method({"GET", "DELETE"})
      */
     public function deleteAction(Request $request, Product $product)
@@ -162,8 +165,10 @@ class ProductController extends Controller
                 return $this->redirectToRoute('product_index');
             }
 
+            $message = $product->isDeletable() ? 'product' : 'product. This product has sale offers from users, they will be deleted too';
+
             return $this->render('admin/delete.html.twig', [
-                'message' => 'product',
+                'message' => $message,
                 'deleteForm' => $form->createView()
             ]);
         }

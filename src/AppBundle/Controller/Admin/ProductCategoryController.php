@@ -89,7 +89,7 @@ class ProductCategoryController extends Controller
     /**
      * Deletes a productCategory entity.
      *
-     * @Route("/delete/{id}", name="product-category_delete")
+     * @Route("/{id}/delete", name="product-category_delete")
      * @Method({"GET", "DELETE"})
      */
     public function deleteAction(Request $request, ProductCategory $productCategory)

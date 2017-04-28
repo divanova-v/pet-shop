@@ -23,7 +23,7 @@
                         <p class="text-left">{{ saleOffer.description }}</p>
                     </div>
                     <div class="type-info col-md-4">
-                        <p class="text-right"><strong>Saler:</strong></p>
+                        <p class="text-right"><strong>Seller:</strong></p>
                     </div>
                     <div class="col-md-8">
                         {% if saleOffer.user %}
@@ -36,7 +36,7 @@
                         <p class="text-right"><strong>Price:</strong></p>
                     </div>
                     <div class="col-md-8">
-                        <p class="text-left">{{ saleOffer.price }}</p>
+                        <p class="text-left">{{ saleOffer.price|localizedcurrency('EUR') }}</p>
                     </div>
                     <div class="type-info col-md-4">
                         <p class="text-right"><strong>Available quantity:</strong></p>
@@ -77,7 +77,6 @@
 
                     {% else %}
                         <div class="col-md-8 col-md-offset-4 actions">
-                            <a class="btn btn-danger" href="{{ path('saleoffer_edit', { 'id': saleOffer.id }) }}">Stop selling</a>
                             <a  class="btn btn-default" href="{{ path('saleoffer_index') }}">Back to the list</a>
                         </div>
                     {% endif %}

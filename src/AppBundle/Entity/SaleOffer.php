@@ -47,7 +47,7 @@ class SaleOffer
     private $description;
 
     /**
-     * @var string
+     * @var double
      *
      * @ORM\Column(name="price", type="decimal", precision=10, scale=2)
      *

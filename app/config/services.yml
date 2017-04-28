@@ -9,3 +9,9 @@ services:
     #    arguments: ['@another_service_name', 'plain_value', '%parameter_name%']
      app.security.access_denied_handler:
           class: AppBundle\Security\AccessDeniedHandler
+
+
+     twig.extension.intl:
+         class: Twig_Extensions_Extension_Intl
+         tags:
+             - { name: twig.extension }

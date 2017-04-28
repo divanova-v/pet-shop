@@ -11,6 +11,7 @@ namespace AppBundle\Controller\Admin;
 
 use AppBundle\Entity\SaleOffer;
 use AppBundle\Entity\User;
+use AppBundle\Entity\User2Product;
 use AppBundle\Form\SaleOfferType;
 use AppBundle\Form\UserSaleOfferNewType;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
@@ -53,31 +54,48 @@ class SaleOfferController extends Controller
      *
      * @Route("/{id}/offer/new", name="user_saleoffer_new")
      * @Method({"GET", "POST"})
+     * @Security("has_role('ROLE_ADMIN') or has_role('ROLE_USER')")
      */
     public function newAction(Request $request, User $user)
     {
         $saleOffer = new Saleoffer();
-        $form = $this->createForm(UserSaleOfferNewType::class, $saleOffer);
+        $form = $this->createForm(UserSaleOfferNewType::class, $saleOffer, ['userId' => $user->getId()]);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            $em = $this->getDoctrine()->getManager();
             /**
              * @var $saleOffer SaleOffer
              */
-            $saleOffer = $form->getData();
-            $saleOffer->setUser($user);
-            $saleOffer->setCreatedOn(new \DateTime());
-            $saleOffer->setUpdatedOn(new \DateTime());
-            $em = $this->getDoctrine()->getManager();
-            $em->persist($saleOffer);
-            $em->flush();
+            $userProduct = $this->getDoctrine()
+                ->getRepository(User2Product::class)
+                ->getUserProductByUserIdAndProductId($user->getId(), $saleOffer->getProduct()->getId());
+            if($userProduct->getQuantity() >= $saleOffer->getQuantity()){
+                $userProduct->setQuantity($userProduct->getQuantity() - $saleOffer->getQuantity());
+                $em->persist($userProduct);
+                $saleOffer = $form->getData();
+                $saleOffer->setUser($user);
+                $saleOffer->setCreatedOn(new \DateTime());
+                $saleOffer->setUpdatedOn(new \DateTime());
 
-            return $this->redirectToRoute('user_products_in_sale', array('id' => $saleOffer->getId()));
+                $em->persist($saleOffer);
+                $em->flush();
+                if($this->getUser()->isAdmin()){
+                    return $this->redirectToRoute('user_products_in_sale', array('id' => $user->getId()));
+                }
+                else{
+                    return $this->redirectToRoute('profile_index');
+                }
+            }
+            else{
+                $this->addFlash('error', 'Max quantity is the available quantity: ' . $userProduct->getQuantity());
+            }
         }
 
         return $this->render('saleoffer/new.html.twig', array(
             'saleOffer' => $saleOffer,
             'form' => $form->createView(),
+            'user' => $user,
         ));
     }
 

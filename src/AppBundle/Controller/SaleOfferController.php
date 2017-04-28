@@ -16,7 +16,6 @@ use Symfony\Component\HttpFoundation\Request;
 /**
  * Saleoffer controller.
  *
- * @Route("saleoffer")
  */
 class SaleOfferController extends Controller
 {
@@ -32,6 +31,9 @@ class SaleOfferController extends Controller
     {
         $filterForm = $this->createForm(FilterType::class);
         $filterForm->handleRequest($request);
+        $form = $this->createFormBuilder()
+            ->add('quantity', NumberType::class)
+            ->getForm();
         $repo = $this->getDoctrine()->getRepository(SaleOffer::class);
         if ($filterForm->isSubmitted() && $filterForm->isValid()) {
             //filter sale offers
@@ -45,41 +47,15 @@ class SaleOfferController extends Controller
         return $this->render('saleoffer/index.html.twig', array(
             'saleOffers' => $saleOffers,
             'filterForm' => $filterForm->createView(),
-        ));
-    }
-
-
-    /**
-     * Creates a new saleOffer entity.
-     *
-     * @Route("/new", name="saleoffer_new")
-     * @Method({"GET", "POST"})
-     * @Security("has_role('ROLE_USER')")
-     */
-    public function newAction(Request $request)
-    {
-        $saleOffer = new Saleoffer();
-        $form = $this->createForm('AppBundle\Form\SaleOfferType', $saleOffer);
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            $em = $this->getDoctrine()->getManager();
-            $em->persist($saleOffer);
-            $em->flush();
-
-            return $this->redirectToRoute('saleoffer_show', array('id' => $saleOffer->getId()));
-        }
-
-        return $this->render('saleoffer/new.html.twig', array(
-            'saleOffer' => $saleOffer,
             'form' => $form->createView(),
         ));
     }
 
+
     /**
      * Finds and displays a saleOffer entity.
      *
-     * @Route("/{id}", name="saleoffer_show")
+     * @Route("/saleoffer/{id}", name="saleoffer_show")
      * @Method("GET")
      */
     public function showAction(SaleOffer $saleOffer)
@@ -95,56 +71,80 @@ class SaleOfferController extends Controller
     }
 
     /**
-     * Displays a form to edit an existing saleOffer entity.
+     * Creates a new saleOffer entity.
      *
-     * @Route("/{id}/edit", name="saleoffer_edit")
+     * @Route("/profile/offer/new", name="saleoffer_new")
      * @Method({"GET", "POST"})
+     * @Security("has_role('ROLE_USER')")
      */
-    public function editAction(Request $request, SaleOffer $saleOffer)
+    public function newAction(Request $request)
     {
-        $editForm = $this->createForm('AppBundle\Form\SaleOfferType', $saleOffer);
-        $editForm->handleRequest($request);
+        $saleOffer = new Saleoffer();
+        $form = $this->createForm('AppBundle\Form\SaleOfferType', $saleOffer);
+        $form->handleRequest($request);
 
-        if ($editForm->isSubmitted() && $editForm->isValid()) {
-            $this->getDoctrine()->getManager()->flush();
+        if ($form->isSubmitted() && $form->isValid()) {
+            $em = $this->getDoctrine()->getManager();
+            $em->persist($saleOffer);
+            $em->flush();
 
-            $this->get('session')->getFlashBag()->add('success', 'Sale offer is edited');
-            return $this->redirectToRoute('user_products_in_sale', ['id' => $saleOffer->getUser()->getId()]);
+            return $this->redirectToRoute('user_products_in_sale', array('id' => $saleOffer->getUserId()));
         }
 
-        return $this->render('saleoffer/edit.html.twig', array(
+        return $this->render('saleoffer/new.html.twig', array(
             'saleOffer' => $saleOffer,
-            'edit_form' => $editForm->createView(),
+            'form' => $form->createView(),
         ));
     }
 
     /**
      * Deletes a saleOffer entity.
      *
-     * @Route("/{id}/delete", name="saleoffer_delete")
+     * @Route("/saleoffer/{id}/delete", name="saleoffer_delete")
      * @Method({"GET", "DELETE"})
-     * @Security("has_role('ROLE_ADMIN')")
+     * @Security("has_role('ROLE_ADMIN') or has_role('ROLE_USER')")
      */
     public function deleteAction(Request $request, SaleOffer $saleOffer)
     {
-        $form = $this->createDeleteForm($saleOffer);
-        $form->handleRequest($request);
+        if($saleOffer) {
+            if ($saleOffer->getUser() == $this->getUser() || $this->getUser()->isAdmin()) {
+                $form = $this->createDeleteForm($saleOffer);
+                $form->handleRequest($request);
 
-        $userId = $saleOffer->getUserId();
+                if ($form->isSubmitted() && $form->isValid()) {
+                    $em = $this->getDoctrine()->getManager();
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            $em = $this->getDoctrine()->getManager();
-            $em->remove($saleOffer);
-            $em->flush();
+                    $userProductRepo = $this->getDoctrine()->getRepository(User2Product::class);
+                    $userProduct = $userProductRepo->getUserProductByUserIdAndProductId($saleOffer->getUserId(), $saleOffer->getProductId());
+                    $userProduct->setQuantity($userProduct->getQuantity() + $saleOffer->getQuantity());
+                    $em->persist($userProduct);
+                    $em->remove($saleOffer);
+                    $em->flush();
 
-            $this->addFlash('success', 'Sale offer is deleted');
-            return $this->redirectToRoute('user_products_in_sale', ['id' => $userId]);
+                    $this->addFlash('success', 'Sale offer is deleted');
+                    if($saleOffer->getUser() == $this->getUser()){
+                        return $this->redirectToRoute('profile_index');
+                    }
+                    else{
+                        return $this->redirectToRoute('user_products_in_sale', ['id' => $saleOffer->getUserId()]);
+                    }
+
+                }
+
+                return $this->render('admin/delete.html.twig', [
+                    'message' => 'sale offer',
+                    'deleteForm' => $form->createView(),
+                ]);
+            }
+        }
+        $this->addFlash('info', 'You are trying to delete offer that does not exist');
+        if($saleOffer->getUser() == $this->getUser()){
+            return $this->redirectToRoute('profile_index');
+        }
+        else{
+            return $this->redirectToRoute('user_products_in_sale', ['id' => $saleOffer->getUserId()]);
         }
 
-        return $this->render('admin/delete.html.twig', [
-            'message' => 'sale offer',
-            'deleteForm'=> $form->createView(),
-        ]);
     }
 
     /**

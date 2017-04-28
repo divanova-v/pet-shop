@@ -3,27 +3,49 @@
 {% block main %}
     <h1>My shopping cart</h1>
 
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Product</th>
-                <th>Image</th>
-                <th>Offer</th>
-                <th>Quantity</th>
-                <th>Price</th>
-            </tr>
-        </thead>
-        {% for offer in saleOffers %}
-            <tr>
-                <td>{{ offer.product.name }}</td>
-                <td><img alt="product_image" width="50px" src="/images/products/{{ offer.product.image }}"/></td>
-                <td><a href="{{ path('saleoffer_show', {'id': offer.id}) }}">View Offer</a></td>
-                <td>{{ offer.quantity }}</td>
-                <td>{{ offer.price }}</td>
-            </tr>
-        {% endfor %}
+    <div class="row">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Product</th>
+                    <th>Image</th>
+                    <th>Offer</th>
+                    <th>Quantity</th>
+                    <th>Price</th>
+                    <th>Remove</th>
+                </tr>
+            </thead>
+            {% for offer in saleOffers %}
+                <tr>
+                    <td>{{ offer.product.name }}</td>
+                    <td><img alt="product_image" width="50px" src="/images/products/{{ offer.product.image }}"/></td>
+                    <td><a href="{{ path('saleoffer_show', {'id': offer.id}) }}">View Offer</a></td>
+                    <td>{{ offer.quantity }}</td>
+                    <td>{{ offer.price|localizedcurrency('EUR') }}</td>
+                    <td>
+                        {{ form_start(form, {
+                            'action': path('cart_remove_item', {'id':offer.id}),
+                            'method': 'POST'}) }}
+                        <input class="btn btn-danger" type="submit" value="Remove">
+                        {{ form_end(form) }}
+                    </td>
+                </tr>
+            {% endfor %}
 
-    </table>
-    {{ totalPrice }}
+        </table>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <h3 class="col-md-12 text-right">{{ totalPrice|localizedcurrency('EUR') }}</h3>
+            <div class="col-md-offset-10 col-md-2">
+                {{ form_start(form, {
+                    'action': path('cart_checkout'),
+                    'method': 'POST'}) }}
+                <input class=" col-md-12 btn btn-success" type="submit" value="Checkout">
+                {{ form_end(form) }}
+            </div>
+        </div>
+    </div>
+
 
 {%  endblock %}

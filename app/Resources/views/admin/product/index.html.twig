@@ -27,25 +27,27 @@
         </thead>
         <tbody>
         {% for product in products %}
-            <tr>
-                <td>{{ product.id }}</td>
-                <td>{{ product.name }}</td>
-                <td>{{ product.category.name }}</td>
-                <td><img width="50px" src="/images/products/{{ product.image }}"/></td>
-                <td>{{ product.shopOffer.description }}</td>
-                <td>{{ product.shopOffer.price }}</td>
-                <td>{{ product.shopOffer.quantity }}</td>
-                <td>{{ product.shopOffer.showOrder }}</td>
-                <td>{% if product.createdOn %}{{ product.createdOn|date('Y-m-d') }}{% endif %}</td>
-                <td>{% if product.updatedOn %}{{ product.updatedOn|date('Y-m-d') }}{% endif %}</td>
-                <td>
-                    <a class="btn btn-info btn-sm" href="{{ path('product_edit', { 'id': product.id }) }}">Edit</a>
-                    {% if product.isDeletable() or is_granted('ROLE_ADMIN') %}
-                        <a href="{{ path('product_delete', { 'id': product.id }) }}"
-                           class="btn btn-danger btn-sm" role="button">Delete</a>
-                    {% endif %}
-                </td>
-            </tr>
+            {% for offer in product.saleOffers %}
+                <tr>
+                    <td>{{ product.id }}</td>
+                    <td>{{ product.name }}</td>
+                    <td>{{ product.category.name }}</td>
+                    <td><img width="50px" src="/images/products/{{ product.image }}"/></td>
+                    <td>{{ offer.description }}</td>
+                    <td>{{ offer.price }}</td>
+                    <td>{{ offer.quantity }}</td>
+                    <td>{{ offer.showOrder }}</td>
+                    <td>{% if product.createdOn %}{{ product.createdOn|date('Y-m-d') }}{% endif %}</td>
+                    <td>{% if product.updatedOn %}{{ product.updatedOn|date('Y-m-d') }}{% endif %}</td>
+                    <td>
+                        <a class="btn btn-info btn-sm" href="{{ path('product_edit', { 'id': product.id }) }}">Edit</a>
+                        {% if product.isDeletable() or is_granted('ROLE_ADMIN') %}
+                            <a href="{{ path('product_delete', { 'id': product.id }) }}"
+                               class="btn btn-danger btn-sm" role="button">Delete</a>
+                        {% endif %}
+                    </td>
+                </tr>
+            {% endfor %}
         {% endfor %}
         </tbody>
     </table>

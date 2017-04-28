@@ -53,8 +53,8 @@ class User implements UserInterface
     private $password;
 
     /**
-     * @var int
-     * @ORM\Column(name="cash", type="integer")
+     * @var double
+     * @ORM\Column(name="cash", type="decimal", precision=10, scale=2)
      */
     private $cash;
 
@@ -270,7 +270,7 @@ class User implements UserInterface
     }
 
     /**
-     * @return int
+     * @return double
      */
     public function getCash()
     {
@@ -278,11 +278,19 @@ class User implements UserInterface
     }
 
     /**
-     * @param int $cash
+     * @param double $cash
      */
     public function setCash($cash)
     {
         $this->cash = $cash;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isAdmin()
+    {
+        return in_array('ROLE_ADMIN', $this->getRoles());
     }
 
 

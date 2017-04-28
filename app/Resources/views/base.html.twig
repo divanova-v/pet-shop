@@ -49,7 +49,7 @@
                                 </li>
                             {% if is_granted('ROLE_USER') %}
                                 <li>
-                                    <a href="">
+                                    <a href="{{ path('profile_index') }}">
                                         My Profile
                                     </a>
                                 </li>
@@ -92,6 +92,18 @@
                     </div>
                 {% endfor %}
         {% endif %}
+        </div>
+        <div class="row">
+            {% if app.session.flashBag.has('info') %}
+                {% for message in app.session.flashBag.get('info') %}
+                    <div class="alert alert-info alert-dismissable" role="alert">
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
         </div>
         {# error messages #}
         <div class="row">

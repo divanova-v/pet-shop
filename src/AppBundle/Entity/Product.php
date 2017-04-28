@@ -91,9 +91,9 @@ class Product
     private $sales;
 
     /**
-     * @var SaleOffer
+     * @var bool
      */
-    private $shopOffer;
+    private $isDeletable;
 
     public function __construct()
     {
@@ -308,28 +308,21 @@ class Product
         //
     }
 
+    /**
+     * @param int $isDeletable
+     */
+    public function setIsDeletable($count)
+    {
+        $this->isDeletable = $count <= 1;
+    }
+
+    /**
+     * @return bool
+     */
     public function isDeletable()
     {
-        return $this->getSaleOffers()->count() === 1 && $this->getSaleOffers()->current()->getUserId() === null;
+        return $this->isDeletable;
     }
-
-    /**
-     * @return SaleOffer
-     */
-    public function getShopOffer()
-    {
-        return $this->shopOffer;
-    }
-
-    /**
-     * @param SaleOffer $shopOffer
-     */
-    public function setShopOffer($shopOffer)
-    {
-        $this->shopOffer = $shopOffer;
-    }
-
-
 
   }
 

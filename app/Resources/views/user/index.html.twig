@@ -1,0 +1,88 @@
+{% extends 'base.html.twig' %}
+
+{% block main %}
+<h1>My profile</h1>
+    <h3>Profile data</h3>
+    <div class="row">
+        <div class="col-sm-4 col-xs-12">
+            <p class="col-xs-6 text-right"><i><b>Full Name:</b></i></p>
+            <p class="col-xs-6 ">{{ user.fullName }}</p>
+        </div>
+        <div class="col-sm-4 col-xs-12">
+            <p class="col-xs-6 text-right"><i><b>Email:</b></i></p>
+            <p class="col-xs-6">{{ user.email }}</p>
+        </div>
+        <div class="col-sm-4 col-xs-12">
+            <p class="col-xs-6 text-right"><i><b>Cash:</b></i></p>
+            <p class="col-xs-6">{{ user.cash|localizedcurrency('EUR') }}</p>
+        </div>
+    </div>
+    <hr>
+
+    <h3>My products</h3>
+    <div class="row">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Product Name</th>
+                    <th>Image</th>
+                    <th>Product category</th>
+                    <th>Quantity</th>
+                    <th>Bough on</th>
+                </tr>
+                {%  for userProduct in user.products %}
+                    {% if userProduct.quantity > 0 %}
+                    <tr>
+                        <td>{{ userProduct.product.name }}</td>
+                        <td><img width="50px" src="/images/products/{{ userProduct.product.image }}"/></td>
+                        <td>{{ userProduct.product.category.name }}</td>
+                        <td>{{ userProduct.quantity }}</td>
+                        <td>{{ userProduct.createdOn|date('Y-m-d') }}</td>
+                    </tr>
+                    {% endif %}
+                {% endfor %}
+            </thead>
+        </table>
+    </div>
+    <hr>
+
+    <h3>My sales</h3>
+    {% if user.products.count > 0 %}
+        <div class="row">
+            <a class="col-md-2 col-md-offset-10 col-sm-3 col-sm-offset-9 col-xs-4 col-xs-offset-8 btn btn-success"
+               href="{{ path('user_saleoffer_new', {'id': user.id}) }}">Add new sale offer</a>
+        </div>
+    {% endif %}
+    <div class="row">
+        <table class="table">
+            <thead>
+            <tr>
+                <th>Product Name</th>
+                <th>Image</th>
+                <th>Quantity</th>
+                <th>Price</th>
+                <th>Action</th>
+            </tr>
+            {%  for saleOffer in user.saleOffers %}
+                {% if saleOffer.quantity > 0 %}
+                <tr>
+                    <td>{{ saleOffer.product.name }}</td>
+                    <td><img width="50px" src="/images/products/{{ saleOffer.product.image }}"/></td>
+                    <td>{{ saleOffer.quantity }}</td>
+                    <td>{{ saleOffer.price|localizedcurrency('EUR') }}</td>
+                    <td>
+                        {{ form_start(form, {
+                            'action': path('saleoffer_delete', {'id':saleOffer.id}),
+                            'method': 'DELETE'}) }}
+                        <input class="btn btn-danger" type="submit" value="Stop selling">
+                        {{ form_end(form) }}
+                    </td>
+                </tr>
+                {% endif %}
+            {% endfor %}
+            </thead>
+        </table>
+    </div>
+    <hr>
+
+{% endblock %}

@@ -41,6 +41,7 @@ class ProductRepository extends \Doctrine\ORM\EntityRepository
     public function getShopProductsAndOffers(){
         $query = $this
             ->createQueryBuilder('p')
+            ->select(['p', 'so'])
             ->leftJoin('p.saleOffers',
                 'so',
                 'WITH',
@@ -53,5 +54,18 @@ class ProductRepository extends \Doctrine\ORM\EntityRepository
         return $query->getResult();
     }
 
+    public function countSaleOffersByProductId($product)
+    {
+        $query = $this->createQueryBuilder('p')
+            ->select('count(so.id) as countSaleOffers')
+            ->join('p.saleOffers', 'so')
+            ->where('so.product = :product')
+            ->setParameters([
+                'product' => $product
+            ])
+            ->getQuery();
+
+        return $query->getSingleScalarResult();
+    }
 
 }
