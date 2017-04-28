@@ -43,6 +43,6 @@ class User2ProductRepository extends \Doctrine\ORM\EntityRepository
                 'productId' => $productId,
             ])
             ->getQuery();
-        return $query->getSingleResult();
+        return $query->getOneOrNullResult();
     }
 }

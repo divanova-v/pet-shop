@@ -2,7 +2,6 @@
 
 namespace AppBundle\Controller;
 
-use AppBundle\Entity\ProductCategory;
 use AppBundle\Entity\SaleOffer;
 use AppBundle\Entity\User2Product;
 use AppBundle\Form\FilterType;
@@ -44,10 +43,13 @@ class SaleOfferController extends Controller
             $saleOffers = $repo->getAvailableSaleOffers();
         }
 
+        $calc = $this->get('price_calculator');
+
         return $this->render('saleoffer/index.html.twig', array(
             'saleOffers' => $saleOffers,
             'filterForm' => $filterForm->createView(),
             'form' => $form->createView(),
+            'calc' => $calc,
         ));
     }
 
@@ -63,7 +65,8 @@ class SaleOfferController extends Controller
         $form = $this->createFormBuilder()
             ->add('quantity', NumberType::class)
             ->getForm();
-
+        $calc = $this->get('price_calculator');
+        $saleOffer->setFinalPrice($calc->calculate($saleOffer));
         return $this->render('saleoffer/show.html.twig', array(
             'saleOffer' => $saleOffer,
             'form' => $form->createView()

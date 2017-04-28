@@ -1,5 +1,10 @@
 {% extends 'base.html.twig' %}
 
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('css/sale-offers/sale-offer.css') }}">
+{% endblock %}
+
 {% block main %}
     <div class="row">
         <h1 class="text-center product-name">{{ saleOffer.product.name }}</h1>
@@ -36,7 +41,18 @@
                         <p class="text-right"><strong>Price:</strong></p>
                     </div>
                     <div class="col-md-8">
-                        <p class="text-left">{{ saleOffer.price|localizedcurrency('EUR') }}</p>
+                        <p class="text-left">
+                            {% if  saleOffer.finalPrice != saleOffer.price %}
+                                <del>
+                                    {{ saleOffer.price|localizedcurrency('EUR') }}
+                                </del>
+                                <span class="promotion-price">
+                                    {{ saleOffer.finalPrice|localizedcurrency('EUR') }}
+                                </span>
+                            {% else %}
+                                {{ saleOffer.price|localizedcurrency('EUR') }}
+                            {% endif %}
+                        </p>
                     </div>
                     <div class="type-info col-md-4">
                         <p class="text-right"><strong>Available quantity:</strong></p>

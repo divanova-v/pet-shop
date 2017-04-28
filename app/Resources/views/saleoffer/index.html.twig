@@ -1,5 +1,10 @@
 {% extends 'base.html.twig' %}
 
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('css/sale-offers/sale-offer.css') }}">
+{% endblock %}
+
 {% block main %}
     <div class="row">
         <div class="col-sm-4 col-sm-offset-8 col-xs-12">
@@ -19,7 +24,19 @@
             <h4 class="text-right">
                 <i>Price:
                     <b>
-                        <span>{{ saleOffer.price|localizedcurrency('EUR') }}</span>
+                        <span>
+                            {% set newPrice = calc.calculate(saleOffer) %}
+                            {% if newPrice == saleOffer.price %}
+                            {{ saleOffer.price|localizedcurrency('EUR') }}
+                            {% else %}
+                            <del>
+                                {{ saleOffer.price|localizedcurrency('EUR') }}
+                            </del>
+                            <span class="promotion-price">
+                                {{ newPrice|localizedcurrency('EUR') }}
+                            </span>
+                            {% endif %}
+                        </span>
                     </b>
                 </i>
             </h4>
@@ -28,7 +45,6 @@
                    class="col-lg-5 btn btn-primary btn-sm active" role="button">
                     view
                 </a>
-                {#{% if app.user and app.user != saleOffer.user %}#}
                     {{ form_start(form, {
                         'action': path('saleoffer_add_to_cart', {'id':saleOffer.id}),
                         'method': 'POST'}) }}
@@ -46,7 +62,6 @@
                             Add to cart
                         </button>
                     {{ form_end(form) }}
-                {#{% endif %}#}
             </div>
 
         </div>

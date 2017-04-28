@@ -21,7 +21,19 @@
                     <td><img alt="product_image" width="50px" src="/images/products/{{ offer.product.image }}"/></td>
                     <td><a href="{{ path('saleoffer_show', {'id': offer.id}) }}">View Offer</a></td>
                     <td>{{ offer.quantity }}</td>
-                    <td>{{ offer.price|localizedcurrency('EUR') }}</td>
+                    <td>
+                        {% if offer.finalPrice != offer.price %}
+                            <del>
+                                {{ offer.price|localizedcurrency('EUR') }}
+                            </del>
+                            <span class="promotion-price">
+                                {{ offer.finalPrice|localizedcurrency('EUR') }}
+                            </span>
+
+                        {% else %}
+                            {{ offer.price|localizedcurrency('EUR') }}
+                        {% endif %}
+                    </td>
                     <td>
                         {{ form_start(form, {
                             'action': path('cart_remove_item', {'id':offer.id}),
@@ -35,7 +47,7 @@
         </table>
     </div>
     <div class="row">
-        <div class="col-md-12">
+        <div class="col-md-12">{% dump(totalPrice) %}
             <h3 class="col-md-12 text-right">{{ totalPrice|localizedcurrency('EUR') }}</h3>
             <div class="col-md-offset-10 col-md-2">
                 {{ form_start(form, {

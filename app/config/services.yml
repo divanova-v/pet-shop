@@ -15,3 +15,7 @@ services:
          class: Twig_Extensions_Extension_Intl
          tags:
              - { name: twig.extension }
+
+     price_calculator:
+         class: AppBundle\Service\PriceCalculator
+         arguments: ['@doctrine.orm.entity_manager']

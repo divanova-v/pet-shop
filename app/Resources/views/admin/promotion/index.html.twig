@@ -1,0 +1,44 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <h1>Promotions list</h1>
+
+    <div class="row">
+        <a class="col-md-2 col-md-offset-6 col-sm-3 col-sm-offset-3 col-xs-4 btn btn-success"
+           href="{{ path('promotion_new_general') }}">Add general</a>
+        <a class="col-md-2 col-sm-3 col-xs-4 btn btn-primary" href="{{ path('promotion_new_category') }}">Add for categories</a>
+        <a class="col-md-2 col-sm-3 col-xs-4 btn btn-info" href="{{ path('promotion_new_saleoffer') }}">Add for offers</a>
+    </div>
+    <div class="row">
+
+        <table class="table">
+            <thead>
+            <tr>
+                <th>Id</th>
+                <th>Description</th>
+                <th>Percent</th>
+                <th>Start Time</th>
+                <th>End Time</th>
+                <th>Is General</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for promotion in promotions %}
+                <tr>
+                    <td>{{ promotion.id }}</td>
+                    <td>{{ promotion.description }}</td>
+                    <td>{{ promotion.percent }}</td>
+                    <td>{{ promotion.startDate|date('Y-m-d H:m:s') }}</td>
+                    <td>{{ promotion.endDate|date('Y-m-d H:m:s') }}</td>
+                    <td>{% if promotion.general == 1 %}
+                        Yes
+                        {% else %}
+                        No
+                        {% endif %}
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}

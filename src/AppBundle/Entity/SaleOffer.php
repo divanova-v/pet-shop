@@ -47,7 +47,7 @@ class SaleOffer
     private $description;
 
     /**
-     * @var double
+     * @var float
      *
      * @ORM\Column(name="price", type="decimal", precision=10, scale=2)
      *
@@ -106,6 +106,21 @@ class SaleOffer
      * @ORM\OneToMany(targetEntity="AppBundle\Entity\User2Product", mappedBy="saleOffer")
      */
     private $soldProducts;
+
+    /**
+     * @var float
+     */
+    private $finalPrice;
+
+    /**
+     * @var ArrayCollection
+     * @ORM\ManyToMany(targetEntity="AppBundle\Entity\Promotion", inversedBy="saleOffers")
+     * @ORM\JoinTable(name="promotion2sale_offer",
+     *     joinColumns={@ORM\JoinColumn(name="offer_id", referencedColumnName="id")},
+     *     inverseJoinColumns={@ORM\JoinColumn(name="promotion_id", referencedColumnName="id")}
+     * )
+     */
+    private $promotions;
 
     public function __construct()
     {
@@ -211,7 +226,7 @@ class SaleOffer
     /**
      * Get price
      *
-     * @return string
+     * @return float
      */
     public function getPrice()
     {
@@ -361,6 +376,39 @@ class SaleOffer
     {
         $this->soldProducts = $soldProducts;
     }
+
+    /**
+     * @return float
+     */
+    public function getFinalPrice()
+    {
+        return $this->finalPrice;
+    }
+
+    /**
+     * @param float $finalPrice
+     */
+    public function setFinalPrice($finalPrice)
+    {
+        $this->finalPrice = $finalPrice;
+    }
+
+    /**
+     * @return ArrayCollection
+     */
+    public function getPromotions()
+    {
+        return $this->promotions;
+    }
+
+    /**
+     * @param ArrayCollection $promotions
+     */
+    public function setPromotions($promotions)
+    {
+        $this->promotions = $promotions;
+    }
+
 
 
 

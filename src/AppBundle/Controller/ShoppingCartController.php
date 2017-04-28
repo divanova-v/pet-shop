@@ -39,9 +39,14 @@ class ShoppingCartController extends Controller
             $offers = $repo->getOffersById($offersIds);
             $totalPrice = 0;
             $form = $this->createFormBuilder()->getForm();
+            $calc = $this->get('price_calculator');
             foreach ($offers as $offer) {
+                /**
+                 * @var $offer SaleOffer
+                 */
                 $offer->setQuantity($sessionCart[$offer->getId()]);
-                $totalPrice += $sessionCart[$offer->getId()] * $offer->getPrice();
+                $offer->setFinalPrice($calc->calculate($offer));
+                $totalPrice += $sessionCart[$offer->getId()] * $offer->getFinalPrice();
             }
             return $this->render('shoppingCart/index.html.twig', [
                 'saleOffers' => $offers,
@@ -113,20 +118,29 @@ class ShoppingCartController extends Controller
             $offers = $saleOffersRepo->getOffersById(array_keys($sessionCart));
             $em = $this->getDoctrine()->getManager();
             $totalPrice = 0;
+            $calc = $this->get('price_calculator');
             foreach ($offers as $offer){
                 $boughtQuantity = $sessionCart[$offer->getId()];
                 if($boughtQuantity <= $offer->getQuantity()){
                     //persist new user's products
-                    $user2Product = new User2Product();
-                    $user2Product->setUser($this->getUser());
-                    $user2Product->setSaleOffer($offer);
-                    $user2Product->setProduct($offer->getProduct());
-                    $user2Product->setQuantity($boughtQuantity);
-                    $user2Product->setCreatedOn(new \DateTime());
+                    $user2Product = $this->getDoctrine()
+                        ->getRepository(User2Product::class)
+                        ->getUserProductByUserIdAndProductId($this->getUser()->getId(), $offer->getProductId());
+                    if(empty($user2Product)){
+                        $user2Product = new User2Product();
+                        $user2Product->setUser($this->getUser());
+                        $user2Product->setSaleOffer($offer);
+                        $user2Product->setProduct($offer->getProduct());
+                        $user2Product->setQuantity($boughtQuantity);
+                        $user2Product->setCreatedOn(new \DateTime());
+                    }
+                    else{
+                        $user2Product->setQuantity($user2Product->getQuantity() + $boughtQuantity);
+                    }
                     $user2Product->setUpdatedOn(new \DateTime());
                     $em->persist($user2Product);
-
-                    $price = $user2Product->getQuantity() * $offer->getPrice();
+                    $offer->setFinalPrice($calc->calculate($offer));
+                    $price = $user2Product->getQuantity() * $offer->getFinalPrice();
                     $totalPrice += $price;
 
                     $seller = $offer->getUser();

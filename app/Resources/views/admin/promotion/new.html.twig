@@ -1,0 +1,15 @@
+{% extends 'base.html.twig' %}
+
+{% block main %}
+    <h1>Create new promotion</h1>
+    <div class="row">
+        {{ form_start(form) }}
+        {{ form_errors(form) }}
+        {{ form_widget(form) }}
+        <input class="btn btn-info" type="submit" value="Add" />
+        <a class="btn btn-default" role="button" href="{{ path('promotion_index') }}">Back to the list</a>
+
+        {{ form_end(form) }}
+    </div>
+{% endblock %}
+
