@@ -24,17 +24,11 @@ class UserSaleOfferNewType extends SaleOfferType
                 'placeholder' => 'Choose a product',
                 'choice_label' => 'name',
                 'query_builder' => function (ProductRepository $er) use ($options) {
-                    $query = $er
-                        ->createQueryBuilder('p')
-                        ->join('p.sales',
-                            'sp',
-                            'WITH',
-                            'sp.userId = :id')
-                        ->orderBy('p.createdOn', 'DESC')
-                        ->setParameters(['id' => $options['userId']]);
-                    return $query;
+                    return $er->getUsersProductsByUserId($options['userId']);
                 }
             ]);
+
+        
         parent::buildForm($builder, $options);
     }
 

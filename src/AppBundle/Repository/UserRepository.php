@@ -19,5 +19,25 @@ class UserRepository extends \Doctrine\ORM\EntityRepository implements UserLoade
         ]);
     }
 
+    /**
+     * @param $registerDate \DateTime
+     * @param $cash integer
+     */
+    public function getUsersByRegisterDateAndCash($registerDate, $cash)
+    {
+        $qb = $this->createQueryBuilder('u');
+        if(!empty($registerDate)){
+            $qb->andWhere($qb->expr()->lte('u.registerDate', ':registerDate' ));
+                $params['registerDate'] = $registerDate;
+        }
+        if(!empty($cash)){
+            $qb->andWhere('u.cash >= :cash');
+                $params['cash'] = $cash;
+        }
+        $qb->setParameters($params);
+        $query = $qb->getQuery();
+
+        return $query->getResult();
+    }
 
 }

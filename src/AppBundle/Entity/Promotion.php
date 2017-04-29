@@ -64,7 +64,7 @@ class Promotion
 
     /**
      * @var ArrayCollection
-     * @ORM\ManyToMany(targetEntity="AppBundle\Entity\ProductCategory", mappedBy="promotions")
+     * @ORM\ManyToMany(targetEntity="AppBundle\Entity\ProductCategory")
      * @ORM\JoinTable(name="promotion2product_category",
      *     joinColumns={@ORM\JoinColumn(name="promotion_id", referencedColumnName="id")},
      *     inverseJoinColumns={@ORM\JoinColumn(name="category_id", referencedColumnName="id")}

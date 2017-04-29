@@ -87,6 +87,12 @@ class User implements UserInterface
      */
     private $roles;
 
+    /**
+     * @var \DateTime
+     * @ORM\Column(name="registeredOn", type="datetime")
+     */
+    private $registerDate;
+
     public function __construct()
     {
         $this->saleOffers = new ArrayCollection();
@@ -291,6 +297,22 @@ class User implements UserInterface
     public function isAdmin()
     {
         return in_array('ROLE_ADMIN', $this->getRoles());
+    }
+
+    /**
+     * @return \DateTime
+     */
+    public function getRegisterDate()
+    {
+        return $this->registerDate;
+    }
+
+    /**
+     * @param \DateTime $registerDate
+     */
+    public function setRegisterDate($registerDate)
+    {
+        $this->registerDate = $registerDate;
     }
 
 

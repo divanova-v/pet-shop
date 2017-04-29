@@ -18,7 +18,9 @@ class ProductRepository extends \Doctrine\ORM\EntityRepository
      */
     public function getShopProductAndOfferByProductId($id)
     {
-        $query = $this->createQueryBuilder('p')
+        $query = $this
+            ->createQueryBuilder('p')
+            ->select(['p', 'so'])
             ->leftJoin('p.saleOffers',
                 'so',
                 'WITH',
@@ -66,6 +68,21 @@ class ProductRepository extends \Doctrine\ORM\EntityRepository
             ->getQuery();
 
         return $query->getSingleScalarResult();
+    }
+
+    /**
+     * @param $userId integer
+     */
+    public function getUsersProductsByUserId($userId)
+    {
+        $qb = $this->createQueryBuilder('p')
+        ->join('p.sales',
+            'sp',
+            'WITH',
+            'sp.userId = :id')
+        ->orderBy('p.createdOn', 'DESC')
+        ->setParameters(['id' => $userId]);
+        return $qb;
     }
 
 }

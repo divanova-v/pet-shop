@@ -3,9 +3,12 @@
 namespace AppBundle\Controller\Admin;
 
 use AppBundle\Entity\Promotion;
+use AppBundle\Entity\User;
 use AppBundle\Form\PromotionCategoryType;
 use AppBundle\Form\PromotionGeneralType;
 use AppBundle\Form\PromotionSaleOfferType;
+use AppBundle\Form\PromotionUserType;
+use AppBundle\Repository\UserRepository;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
@@ -32,7 +35,8 @@ class PromotionController extends Controller
          */
         $promotions = $this->getDoctrine()
             ->getRepository(Promotion::class)
-            ->getActivePromotions();
+            //->findBy([], ['startDate' => 'DESC']);
+            ->findAll();
         return $this->render('admin/promotion/index.html.twig',[
             'promotions' => $promotions,
         ]);
@@ -70,7 +74,7 @@ class PromotionController extends Controller
      * @Route("/new/category", name="promotion_new_category")
      * @Method({"GET", "POST"})
      */
-    public function newCategoriesPromotion(Request $request)
+    public function newCategoriesPromotionAction(Request $request)
     {
         $promotion = new Promotion();
         $form = $this->createForm(PromotionCategoryType::class, $promotion);
@@ -80,11 +84,6 @@ class PromotionController extends Controller
             $em = $this->getDoctrine()->getManager();
             $promotion = $form->getData();
             $promotion->setIsGeneral(Promotion::NOT_GENERAL);
-            $categories = $promotion->getCategories();
-            foreach ($categories as $category){
-                $category->getPromotions()->add($promotion);
-                $em->persist($category);
-            }
             $em->persist($promotion);
             $em->flush();
 
@@ -102,7 +101,7 @@ class PromotionController extends Controller
      * @Route("/new/saleoofer", name="promotion_new_saleoffer")
      * @Method({"GET", "POST"})
      */
-    public function newSaleOffersPromotion(Request $request)
+    public function newSaleOffersPromotionAction(Request $request)
     {
         $promotion = new Promotion();
         $form = $this->createForm(PromotionSaleOfferType::class, $promotion);
@@ -115,6 +114,44 @@ class PromotionController extends Controller
              */
             $promotion = $form->getData();
             $promotion->setIsGeneral(Promotion::NOT_GENERAL);
+            $em->persist($promotion);
+            $em->flush();
+
+            $this->addFlash('success', 'Promotion successfully added!');
+            return $this->redirectToRoute('promotion_index');
+        }
+
+        return $this->render('admin/promotion/new.html.twig', array(
+            'promotion' => $promotion,
+            'form' => $form->createView(),
+        ));
+    }
+
+    /**
+     * @Route("/new/user", name="promotion_new_user")
+     * @Method({"GET", "POST"})
+     * @param Request $request
+     *
+     */
+    public function newUserPromotion(Request $request)
+    {
+        $promotion = new Promotion();
+        $form = $this->createForm(PromotionUserType::class);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $em = $this->getDoctrine()->getManager();
+            $formData = $form->getData();
+            $promotion->setDescription($formData['description']);
+            $promotion->setPercent($formData['percent']);
+            $promotion->setStartDate($formData['startDate']);
+            $promotion->setEndDate($formData['endDate']);
+            $promotion->setIsGeneral(Promotion::NOT_GENERAL);
+
+            $users = $this->getDoctrine()
+                ->getRepository(User::class)
+                ->getUsersByRegisterDateAndCash($formData['registerDate'], $formData['cash']);
+            $promotion->setUsers($users);
             $em->persist($promotion);
             $em->flush();
 

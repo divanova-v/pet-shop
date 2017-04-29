@@ -38,8 +38,7 @@ class ProductType extends AbstractType
                 [
                     'entry_type' => SaleOfferType::class,
                     'by_reference'=> false
-                ])
-        ;
+                ]);
     }
     
     /**

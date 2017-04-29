@@ -4,6 +4,7 @@ namespace AppBundle\Form;
 
 use AppBundle\Entity\Promotion;
 use AppBundle\Entity\SaleOffer;
+use AppBundle\Repository\SaleOfferRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -18,6 +19,9 @@ class PromotionSaleOfferType extends PromotionGeneralType
             'choice_label' => 'product.name',
             'multiple' => true,
             'expanded' => true,
+            'query_builder' => function (SaleOfferRepository $er) {
+                return $er->getQBForShopSaleOffers();
+            }
         ]);
         parent::buildForm($builder, $options);
     }

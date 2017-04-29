@@ -120,7 +120,7 @@ class ProductController extends Controller
             $product->setUpdatedOn(new \DateTime());
             if($product->getUploadedImage() instanceof UploadedFile){
                 /** @var UploadedFile $file */
-                $file = $product->getImage();
+                $file = $product->getUploadedImage();
                 $filename = md5(
                         $product->getName()
                         . $product->getCreatedOn()->format('Y-m-d H:i:s'))

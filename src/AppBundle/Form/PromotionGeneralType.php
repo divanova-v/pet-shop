@@ -6,6 +6,7 @@ use AppBundle\Entity\Promotion;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
+use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -17,8 +18,8 @@ class PromotionGeneralType extends AbstractType
     {
         $builder->add('description', TextareaType::class)
             ->add('percent', NumberType::class)
-            ->add('startDate', DateTimeType::class)
-            ->add('endDate', DateTimeType::class);
+            ->add('startDate', DateType::class)
+            ->add('endDate', DateType::class);
     }
 
     public function configureOptions(OptionsResolver $resolver)

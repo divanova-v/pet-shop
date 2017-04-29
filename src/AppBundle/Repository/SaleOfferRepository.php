@@ -81,4 +81,15 @@ class SaleOfferRepository extends \Doctrine\ORM\EntityRepository
             ->getQuery();
         return $query->getResult();
     }
+
+    public function getQBForShopSaleOffers()
+    {
+        $qb = $this->createQueryBuilder('so');
+        $qb->join('so.product', 'p')
+            ->where('so.user IS NULL')
+            ->orderBy('p.name', 'ASC');
+        return $qb;
+    }
 }
+
+

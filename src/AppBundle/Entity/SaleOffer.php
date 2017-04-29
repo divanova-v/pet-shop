@@ -112,15 +112,6 @@ class SaleOffer
      */
     private $finalPrice;
 
-    /**
-     * @var ArrayCollection
-     * @ORM\ManyToMany(targetEntity="AppBundle\Entity\Promotion", inversedBy="saleOffers")
-     * @ORM\JoinTable(name="promotion2sale_offer",
-     *     joinColumns={@ORM\JoinColumn(name="offer_id", referencedColumnName="id")},
-     *     inverseJoinColumns={@ORM\JoinColumn(name="promotion_id", referencedColumnName="id")}
-     * )
-     */
-    private $promotions;
 
     public function __construct()
     {
@@ -392,25 +383,6 @@ class SaleOffer
     {
         $this->finalPrice = $finalPrice;
     }
-
-    /**
-     * @return ArrayCollection
-     */
-    public function getPromotions()
-    {
-        return $this->promotions;
-    }
-
-    /**
-     * @param ArrayCollection $promotions
-     */
-    public function setPromotions($promotions)
-    {
-        $this->promotions = $promotions;
-    }
-
-
-
 
 }
 
