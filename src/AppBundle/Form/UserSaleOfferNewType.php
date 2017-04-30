@@ -28,7 +28,7 @@ class UserSaleOfferNewType extends SaleOfferType
                 }
             ]);
 
-        
+
         parent::buildForm($builder, $options);
     }
 

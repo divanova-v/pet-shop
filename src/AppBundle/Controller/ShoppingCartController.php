@@ -34,11 +34,11 @@ class ShoppingCartController extends Controller
         $repo = $this->getDoctrine()->getRepository(SaleOffer::class);
         if(!empty($offersIds)){
             /**
-             * @var SaleOffer[]
+             * @var $offers SaleOffer[]
              */
             $offers = $repo->getOffersById($offersIds);
             $totalPrice = 0;
-            $form = $this->createFormBuilder()->getForm();
+            $form = $this->createAddToCartForm();
             $calc = $this->get('price_calculator');
             foreach ($offers as $offer) {
                 /**
@@ -75,6 +75,9 @@ class ShoppingCartController extends Controller
         $data = [];
         $form = $this->createAddToCartForm($data);
         $form->handleRequest($request);
+        dump($form);
+        dump($form->getErrors(true, false));
+       // exit;
         if($form->isSubmitted() && $form->isValid() ){
             $formData = $form->getData();
 
@@ -99,7 +102,10 @@ class ShoppingCartController extends Controller
             }
         }
 
-        return $this->redirectToRoute('saleoffer_show', ['id' => $offer->getId()]);
+        return $this->redirectToRoute(
+            'saleoffer_show',
+                ['id' => $offer->getId()]
+        );
     }
 
     /**
@@ -122,7 +128,6 @@ class ShoppingCartController extends Controller
             foreach ($offers as $offer){
                 $boughtQuantity = $sessionCart[$offer->getId()];
                 if($boughtQuantity <= $offer->getQuantity()){
-                    //persist new user's products
                     $user2Product = $this->getDoctrine()
                         ->getRepository(User2Product::class)
                         ->getUserProductByUserIdAndProductId($this->getUser()->getId(), $offer->getProductId());

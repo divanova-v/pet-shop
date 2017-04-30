@@ -28,7 +28,6 @@
                 <td>{{ userProduct.quantity }}</td>
                 <td>{{ userProduct.createdOn|date('Y-m-d') }}</td>
                 <td>
-                    <a class=" btn btn-info btn-sm" href="{{ path('user2product_edit', {'id': userProduct.id}) }}" >Change quantity</a>
                     <a class=" btn btn-danger btn-sm" href="{{ path('user2product_delete', {'id': userProduct.id}) }}" >Delete</a>
                 </td>
             </tr>

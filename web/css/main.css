@@ -5,3 +5,17 @@ body{
 .promotion-price{
     color:red;
 }
+
+.offer{
+    margin-top: 20px;
+    margin-bottom: 30px;
+    border: solid 1px #e1e1e1;
+}
+
+.price{
+    margin-right:30px;
+}
+
+.offer-buttons{
+    margin-bottom:15px;
+}

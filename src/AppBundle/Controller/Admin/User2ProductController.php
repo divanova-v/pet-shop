@@ -10,6 +10,7 @@ namespace AppBundle\Controller\Admin;
 
 
 
+use AppBundle\Entity\SaleOffer;
 use AppBundle\Entity\User;
 use AppBundle\Entity\User2Product;
 use AppBundle\Form\User2ProductEditType;
@@ -59,52 +60,45 @@ class User2ProductController extends Controller
 
         if ($form->isSubmitted() && $form->isValid()) {
             $userProduct = $form->getData();
-            $userProduct->setUser($user);
-            $userProduct->setCreatedOn(new \DateTime());
-            $userProduct->setUpdatedOn(new \DateTime());
 
-            $em = $this->getDoctrine()->getManager();
-            $em->persist($userProduct);
-            $em->flush();
+            $offer = $this->getDoctrine()
+                ->getRepository(SaleOffer::class)
+                ->getShopSaleOfferByProduct($userProduct->getProduct());
+            if($offer->getQuantity() >= $userProduct->getQuantity()) {
 
-            $this->get('session')->getFlashBag()->add('success', "Product was added to user's inventar");
+                $offer->setQuantity($offer->getQuantity() - $userProduct->getQuantity());
 
-            return $this->redirectToRoute(
-                'user_products_index', [
-                    'id' => $user->getId(),
-                ]
-            );
+                $userProduct->setUser($user);
+                $userProduct->setCreatedOn(new \DateTime());
+                $userProduct->setUpdatedOn(new \DateTime());
+
+                $em = $this->getDoctrine()->getManager();
+                $em->persist($userProduct);
+                $em->persist($offer);
+                $em->flush();
+
+
+                $this->get('session')->getFlashBag()->add('success', "Product was added to user's inventar");
+
+                return $this->redirectToRoute(
+                    'user_products_index', [
+                        'id' => $user->getId(),
+                    ]
+                );
+            }
+            else{
+                $this->addFlash(
+                    'error',
+                        'Please set smaller quantity. You have only '
+                        . $offer->getQuantity()
+                        . ' of this product');
+            }
         }
 
         return $this->render('admin/user2product/new.html.twig', array(
             'userProduct' => $userProduct,
             'form' => $form->createView(),
             'user' => $user
-        ));
-    }
-
-    /**
-     * change quantity of product
-     *
-     * @Route("/{id}/product/edit", name="user2product_edit")
-     * @param User2Product $userProduct
-     */
-    public function editAction(Request $request, User2Product $userProduct){
-        $editForm = $this->createForm(User2ProductEditType::class, $userProduct);
-        $editForm->handleRequest($request);
-
-        if ($editForm->isSubmitted() && $editForm->isValid()) {
-            $userProduct = $editForm->getData();
-            $userProduct->setUpdatedOn(new \DateTime());
-            $this->getDoctrine()->getManager()->flush();
-
-            $this->addFlash('success', "User's product quantity updated");
-            return $this->redirectToRoute('user_products_index', ['id' => $userProduct->getUserId()]);
-        }
-
-        return $this->render('admin/user2product/edit.html.twig', array(
-            'userProduct' => $userProduct,
-            'edit_form' => $editForm->createView(),
         ));
     }
 

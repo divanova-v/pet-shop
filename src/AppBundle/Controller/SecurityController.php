@@ -39,8 +39,12 @@ class SecurityController extends Controller
 
         $form->handleRequest($request);
         if($form->isSubmitted() && $form->isValid()){
+            /**
+             * @var $user User
+             */
             $user = $form->getData();
             $user->setCash(User::INITIAL_CASH);
+            $user->setRegisterDate(new \DateTime());
             $defaultRole = $this->getDoctrine()
             ->getRepository(Role::class)
             ->findOneBy(['name' => Role::getDefaultRole()]);

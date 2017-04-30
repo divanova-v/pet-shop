@@ -48,25 +48,7 @@ class PromotionController extends Controller
      */
     public function newGeneralAction(Request $request)
     {
-        $promotion = new Promotion();
-        $form = $this->createForm(PromotionGeneralType::class, $promotion);
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            $promotion = $form->getData();
-            $promotion->setIsGeneral(Promotion::GENERAL);
-            $em = $this->getDoctrine()->getManager();
-            $em->persist($promotion);
-            $em->flush();
-
-            $this->addFlash('success', 'Promotion successfully added!');
-            return $this->redirectToRoute('promotion_index');
-        }
-
-        return $this->render('admin/promotion/new.html.twig', array(
-            'promotion' => $promotion,
-            'form' => $form->createView(),
-        ));
+        $this->newPromotion($request, PromotionGeneralType::class, Promotion::GENERAL);
 
     }
 
@@ -76,25 +58,7 @@ class PromotionController extends Controller
      */
     public function newCategoriesPromotionAction(Request $request)
     {
-        $promotion = new Promotion();
-        $form = $this->createForm(PromotionCategoryType::class, $promotion);
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            $em = $this->getDoctrine()->getManager();
-            $promotion = $form->getData();
-            $promotion->setIsGeneral(Promotion::NOT_GENERAL);
-            $em->persist($promotion);
-            $em->flush();
-
-            $this->addFlash('success', 'Promotion successfully added!');
-            return $this->redirectToRoute('promotion_index');
-        }
-
-        return $this->render('admin/promotion/new.html.twig', array(
-            'promotion' => $promotion,
-            'form' => $form->createView(),
-        ));
+        $this->newPromotion($request, PromotionCategoryType::class, Promotion::NOT_GENERAL);
     }
 
     /**
@@ -103,28 +67,7 @@ class PromotionController extends Controller
      */
     public function newSaleOffersPromotionAction(Request $request)
     {
-        $promotion = new Promotion();
-        $form = $this->createForm(PromotionSaleOfferType::class, $promotion);
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            $em = $this->getDoctrine()->getManager();
-            /**
-             * @var $promotion Promotion
-             */
-            $promotion = $form->getData();
-            $promotion->setIsGeneral(Promotion::NOT_GENERAL);
-            $em->persist($promotion);
-            $em->flush();
-
-            $this->addFlash('success', 'Promotion successfully added!');
-            return $this->redirectToRoute('promotion_index');
-        }
-
-        return $this->render('admin/promotion/new.html.twig', array(
-            'promotion' => $promotion,
-            'form' => $form->createView(),
-        ));
+        $this->newPromotion($request, PromotionSaleOfferType::class, Promotion::NOT_GENERAL);
     }
 
     /**
@@ -133,7 +76,7 @@ class PromotionController extends Controller
      * @param Request $request
      *
      */
-    public function newUserPromotion(Request $request)
+    public function newUserPromotionAction(Request $request)
     {
         $promotion = new Promotion();
         $form = $this->createForm(PromotionUserType::class);
@@ -152,6 +95,32 @@ class PromotionController extends Controller
                 ->getRepository(User::class)
                 ->getUsersByRegisterDateAndCash($formData['registerDate'], $formData['cash']);
             $promotion->setUsers($users);
+            $em->persist($promotion);
+            $em->flush();
+
+            $this->addFlash('success', 'Promotion successfully added!');
+            return $this->redirectToRoute('promotion_index');
+        }
+
+        return $this->render('admin/promotion/new.html.twig', array(
+            'promotion' => $promotion,
+            'form' => $form->createView(),
+        ));
+    }
+
+    private function newPromotion(Request $request, $promotionType, $isGeneral)
+    {
+        $promotion = new Promotion();
+        $form = $this->createForm($promotionType, $promotion);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $em = $this->getDoctrine()->getManager();
+            /**
+             * @var $promotion Promotion
+             */
+            $promotion = $form->getData();
+            $promotion->setIsGeneral($isGeneral);
             $em->persist($promotion);
             $em->flush();
 

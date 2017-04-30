@@ -90,6 +90,15 @@ class SaleOfferRepository extends \Doctrine\ORM\EntityRepository
             ->orderBy('p.name', 'ASC');
         return $qb;
     }
+
+    public function getShopSaleOfferByProduct(Product $product)
+    {
+        return $this->findOneBy([
+            'product' => $product,
+            'user' => null
+        ]);
+
+    }
 }
 
 
